@@ -12,7 +12,6 @@ option(STATIC_LIBSAMPLERATE "Use a static libsamplerate library (.a)" OFF)
 set(LIBSAMPLERATE_DIR "./libsamplerate" CACHE STRING "Directory for static libsamplerate")
 
 # Set compiler and flags
-set(CMAKE_C_STANDARD 18)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic -O2 -std=c18 -DVERSION=\"${PROJECT_VERSION}\"")
 
 # Handle RDS2 options
