@@ -84,7 +84,7 @@ static void *net_ctl_worker() {
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
 		"This is MiniRDS, a lightweight RDS encoder.\n"
-		"Version %s\n"
+		"Version %f\n"
 		"\n"
 		"Usage: %s [options]\n"
 		"\n"
@@ -120,7 +120,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 }
 
 static void show_version() {
-	printf("MiniRDS version (radio95 Edit) %s\n", VERSION);
+	printf("MiniRDS version (radio95 Edit) %f\n", VERSION);
 }
 
 /* check MPX volume level */
