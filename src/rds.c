@@ -386,7 +386,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 
 	/* Type 1A groups */
 	if (rds_data.ecc) {
-		if (++group_counter[GROUP_1A] >= 13) {
+		if (++group_counter[GROUP_1A] >= 17) {
 			group_counter[GROUP_1A] = 0;
 			/* Do not generate a 10A group if PTYN is off */
 			get_rds_ecc_group(blocks);
