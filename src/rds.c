@@ -162,7 +162,7 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
 		rt_state = 0; /* rewind when new RT arrives */
 	}
 
-	if(rt_text[0] == "\r") {
+	if(rt_text[0] == '\r') {
 		return 0;
 	}
 
