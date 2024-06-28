@@ -46,6 +46,7 @@ static struct {
 	uint8_t ert_bursting;
 } rds_state;
 
+#ifdef ODA
 /* ODA */
 static struct rds_oda_t odas[MAX_ODAS];
 static struct {
@@ -78,7 +79,6 @@ static struct {
 	uint8_t len[2];
 } ertplus_cfg;
 
-#ifdef ODA
 static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
 
 	if (oda_state.count == MAX_ODAS) return; /* can't accept more ODAs */
@@ -503,7 +503,7 @@ static void get_rds_group(uint16_t *blocks) {
 		get_rds_rt_group(blocks);
 		state++;
 	}
-	if (state => 8) state = 0;
+	if (state >= 8) state = 0;
 
 group_coded:
 	/* for version B groups */
