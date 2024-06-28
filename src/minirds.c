@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 		.rt = "",
 		.pi = 0x3073
 	};
-	float volume = 50.0f;
+	float volume = 80.0f;
 
 	/* buffers */
 	float *mpx_buffer;
