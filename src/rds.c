@@ -629,6 +629,7 @@ void set_rds_rt(unsigned char *rt) {
 	}
 }
 
+#ifdef ODA
 void set_rds_ert(unsigned char *ert) {
 	uint8_t i = 0, len = 0;
 
@@ -660,6 +661,7 @@ void set_rds_ert(unsigned char *ert) {
 
 	rds_state.ert_bursting = rds_state.ert_segments;
 }
+#endif
 
 void set_rds_ps(unsigned char *ps) {
 	uint8_t len = 0;
