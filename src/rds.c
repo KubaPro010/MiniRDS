@@ -78,15 +78,17 @@ static struct {
 	uint8_t len[2];
 } ertplus_cfg;
 
-// static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
+#ifdef ODA
+static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
 
-// 	if (oda_state.count == MAX_ODAS) return; /* can't accept more ODAs */
+	if (oda_state.count == MAX_ODAS) return; /* can't accept more ODAs */
 
-// 	odas[oda_state.count].group = group;
-// 	odas[oda_state.count].aid = aid;
-// 	odas[oda_state.count].scb = scb;
-// 	oda_state.count++;
-// }
+	odas[oda_state.count].group = group;
+	odas[oda_state.count].aid = aid;
+	odas[oda_state.count].scb = scb;
+	oda_state.count++;
+}
+#endif
 
 /* Get the next AF entry
  */
@@ -177,6 +179,7 @@ static void get_rds_rt_group(uint16_t *blocks) {
 
 /* ODA group (3A)
  */
+#ifdef ODA
 static void get_rds_oda_group(uint16_t *blocks) {
 	blocks[1] |= 3 << 12;
 
@@ -191,6 +194,7 @@ static void get_rds_oda_group(uint16_t *blocks) {
 	oda_state.current++;
 	if (oda_state.current == oda_state.count) oda_state.current = 0;
 }
+#endif
 
 /* Generates a CT (clock time) group if the minute has just changed
  * Returns 1 if the CT group was generated, 0 otherwise
@@ -281,26 +285,27 @@ static void get_rds_lps_group(uint16_t *blocks) {
 }
 
 /* RT+ */
-// static void init_rtplus(uint8_t group) {
-// 	register_oda(group, ODA_AID_RTPLUS, 0);
-// 	rtplus_cfg.group = group;
-// }
+#ifdef ODA
+static void init_rtplus(uint8_t group) {
+	register_oda(group, ODA_AID_RTPLUS, 0);
+	rtplus_cfg.group = group;
+}
 
 /* eRT */
-// static void init_ert(uint8_t group) {
-// 	if (GET_GROUP_VER(group) == 1) {
-// 		/* type B groups cannot be used for eRT */
-// 		return;
-// 	}
-// 	register_oda(group, ODA_AID_ERT, 1 /* UTF-8 */);
-// 	ert_cfg.group = group;
-// }
+static void init_ert(uint8_t group) {
+	if (GET_GROUP_VER(group) == 1) {
+		/* type B groups cannot be used for eRT */
+		return;
+	}
+	register_oda(group, ODA_AID_ERT, 1 /* UTF-8 */);
+	ert_cfg.group = group;
+}
 
 /* eRT+ */
-// static void init_ertp(uint8_t group) {
-// 	register_oda(group, ODA_AID_ERTPLUS, 0);
-// 	ertplus_cfg.group = group;
-// }
+static void init_ertp(uint8_t group) {
+	register_oda(group, ODA_AID_ERTPLUS, 0);
+	ertplus_cfg.group = group;
+}
 
 /* RT+ group
  */
@@ -363,6 +368,7 @@ static void get_rds_ertplus_group(uint16_t *blocks) {
 	blocks[3] |= (ertplus_cfg.start[1] & INT8_L6) << 5;
 	blocks[3] |= ertplus_cfg.len[1] & INT8_L5;
 }
+#endif
 
 /* Lower priority groups are placed in a subsequence
  */
@@ -370,14 +376,15 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	static uint8_t group_counter[GROUP_15B];
 
 	/* Type 3A groups */
-	// if (oda_state.count) {
-	if (false) {
+	#ifdef ODA
+	if (oda_state.count) {
 		if (++group_counter[GROUP_3A] >= 20) {
 			group_counter[GROUP_3A] = 0;
 			get_rds_oda_group(blocks);
 			return 1;
 		}
 	}
+	#endif
 
 	/* Type 10A groups */
 	if (rds_data.ptyn[0]) {
@@ -390,22 +397,24 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	}
 
 	/* RT+ groups */
-	// if (++group_counter[rtplus_cfg.group] >= 30) {
-	if (false) {
+	#ifdef ODA
+	if (++group_counter[rtplus_cfg.group] >= 30) {
 		group_counter[rtplus_cfg.group] = 0;
 		get_rds_rtplus_group(blocks);
 		return 1;
 	}
+	#endif
 
 	/* eRT+ groups */
-	// if (rds_data.ert[0]) {
-	if (false) {
+	#ifdef ODA
+	if (rds_data.ert[0]) {
 		if (++group_counter[ertplus_cfg.group] >= 30) {
 			group_counter[ertplus_cfg.group] = 0;
 			get_rds_ertplus_group(blocks);
 			return 1;
 		}
 	}
+	#endif
 
 	return 0;
 }
@@ -430,10 +439,12 @@ static uint8_t get_rds_long_text_groups(uint16_t *blocks) {
 	case 0:
 	case 1:
 	case 2: /* eRT */
+		#ifdef ODA
 		if (rds_data.ert[0]) {
 			get_rds_ert_group(blocks);
 			goto group_coded;
 		}
+		#endif
 		break;
 	case 3: /* Long PS */
 		if (rds_data.lps[0]) {
@@ -483,21 +494,16 @@ static void get_rds_group(uint16_t *blocks) {
 	}
 
 	/* Standard group sequence */
-	switch (state) {
-	case 0:
-		/* Type 0A groups */
+	if(state < 4) {
+		/* 0A */
 		get_rds_ps_group(blocks);
 		state++;
-		break;
-	case 1:
-		/* Type 2A groups */
+	} else if(state > 4) {
+		/* 2A */
 		get_rds_rt_group(blocks);
-		if (!rds_state.rt_bursting) {
-			state++;
-		}
-		break;
+		state++;
 	}
-	if (state == 2) state = 0;
+	if (state => 8) state = 0;
 
 group_coded:
 	/* for version B groups */
