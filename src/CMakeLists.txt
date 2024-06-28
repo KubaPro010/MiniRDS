@@ -5,10 +5,12 @@ project(minirds VERSION 1.0)
 
 # Define options
 option(ODA "Enable ODA (RT+, eRT, eRT+)" OFF)
+
 option(RDS2 "Enable RDS2 capabilities" OFF)
 option(RDS2_QUADRATURE_CARRIER "Shift RDS2 stream carriers by 90, 180, and 270 degrees" ON)
 option(RDS2_SYMBOL_SHIFTING "Enable RDS2 symbol shifting" ON)
 option(RDS2_DEBUG "Enable RDS2 debugging" OFF)
+
 option(STATIC_LIBSAMPLERATE "Use a static libsamplerate library (.a)" OFF)
 set(LIBSAMPLERATE_DIR "./libsamplerate" CACHE STRING "Directory for static libsamplerate")
 
