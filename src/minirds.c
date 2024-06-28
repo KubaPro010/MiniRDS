@@ -56,7 +56,7 @@ static inline void float2char2channel(
 		outbuf[k+3] = upper;
 
 		j += 2;
-		k += 2;
+		k += 4;
 	}
 }
 
