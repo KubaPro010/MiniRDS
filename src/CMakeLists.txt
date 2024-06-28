@@ -12,7 +12,7 @@ option(STATIC_LIBSAMPLERATE "Use a static libsamplerate library (.a)" OFF)
 set(LIBSAMPLERATE_DIR "./libsamplerate" CACHE STRING "Directory for static libsamplerate")
 
 # Set compiler and flags
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic -O2 -std=c18 -DVERSION=\"${PROJECT_VERSION}\"")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -pedantic -O2 -std=c18 -DVERSION=\"${PROJECT_VERSION}\"")
 
 # Define sources
 set(SOURCES
