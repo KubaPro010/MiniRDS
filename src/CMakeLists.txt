@@ -12,6 +12,8 @@ option(RDS2_SYMBOL_SHIFTING "Enable RDS2 symbol shifting" ON)
 option(RDS2_DEBUG "Enable RDS2 debugging" OFF)
 
 option(STATIC_LIBSAMPLERATE "Use a static libsamplerate library (.a)" OFF)
+
+
 set(LIBSAMPLERATE_DIR "./libsamplerate" CACHE STRING "Directory for static libsamplerate")
 
 # Set compiler and flags

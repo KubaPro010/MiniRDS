@@ -39,10 +39,12 @@ static struct {
 	uint8_t lps_update;
 	uint8_t lps_segments;
 
+	#ifdef ODA
 	/* eRT */
 	uint8_t ert_update;
 	uint8_t ert_segments;
 	uint8_t ert_bursting;
+	#endif
 } rds_state;
 
 #ifdef ODA
