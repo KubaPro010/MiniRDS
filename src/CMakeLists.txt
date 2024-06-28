@@ -44,25 +44,18 @@ if(RDS2_DEBUG)
     add_definitions(-DRDS2_DEBUG)
 endif()
 
-function(add_definition_if_not_exists DEF)
-    if(NOT DEFINED DEFINED_${DEF})
-        add_definitions(-D${DEF})
-        set(DEFINED_${DEF} ON CACHE INTERNAL "Definition ${DEF} added")
-    endif()
-endfunction()
-
 if(ODA_ERT)
-    add_definition_if_not_exists(ODA)
+    add_definitions(-DODA)
     add_definitions(-DODA_ERT)
 endif()
 
 if(ODA_RTP)
-    add_definition_if_not_exists(ODA)
+    add_definitions(-DODA)
     add_definitions(-DODA_RTP)
 endif()
 
 if(ODA_ERTP)
-    add_definition_if_not_exists(ODA)
+    add_definitions(-DODA)
     add_definitions(-DODA_RTP)
 endif()
 
