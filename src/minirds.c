@@ -90,12 +90,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"\n"
 		"    -m,--volume       Output volume\n"
 		"\n"
-#ifdef RBDS
-		"    -i,--pi           Program Identification code or callsign\n"
-		"                      (PI code will be calculated from callsign)\n"
-#else
 		"    -i,--pi           Program Identification code\n"
-#endif
 		"                        [default: %04X]\n"
 		"    -s,--ps           Program Service name\n"
 		"                        [default: \"%s\"]\n"
@@ -105,11 +100,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"                        [default: %u]\n"
 		"    -T,--tp           Traffic Program\n"
 		"                        [default: %u]\n"
-#ifdef RBDS
-		"    -A,--af           Alternative Frequency (FM/MF)\n"
-#else
 		"    -A,--af           Alternative Frequency (FM/LF/MF)\n"
-#endif
 		"                        (more than one AF may be passed)\n"
 		"    -P,--ptyn         Program Type Name\n"
 		"\n"
@@ -127,7 +118,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 }
 
 static void show_version() {
-	printf("MiniRDS version %s\n", VERSION);
+	printf("MiniRDS version (radio95 Edit) %s\n", VERSION);
 }
 
 /* check MPX volume level */
@@ -143,8 +134,8 @@ int main(int argc, char **argv) {
 	int opt;
 	char control_pipe[51];
 	struct rds_params_t rds_params = {
-		.ps = "MiniRDS",
-		.rt = "MiniRDS: Software RDS encoder",
+		.ps = "radio95",
+		.rt = "",
 		.pi = 0x1000
 	};
 	float volume = 50.0f;
@@ -179,11 +170,11 @@ int main(int argc, char **argv) {
 	pthread_mutex_t net_ctl_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t net_ctl_cond;
 
-	const char	*short_opt = "m:R:i:s:r:p:T:A:P:"
-#ifdef RBDS
-	"S:"
-#endif
-	"C:hv";
+	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:C:"
+	#ifdef RDS2
+	"I:"
+	#endif
+	"hv";
 
 	struct option	long_opt[] =
 	{
@@ -197,7 +188,11 @@ int main(int argc, char **argv) {
 		{"tp",		required_argument, NULL, 'T'},
 		{"af",		required_argument, NULL, 'A'},
 		{"ptyn",	required_argument, NULL, 'P'},
+		{"lps",    	required_argument, NULL, 'l'},
 		{"ctl",		required_argument, NULL, 'C'},
+		#ifdef RDS2
+		{"img",		required_argument, NULL, 'I'},
+		#endif
 
 		{"help",	no_argument, NULL, 'h'},
 		{"version",	no_argument, NULL, 'v'},
@@ -218,13 +213,7 @@ keep_parsing_opts:
 			break;
 
 		case 'i': /* pi */
-#ifdef RBDS
-			if (optarg[0] == 'K' || optarg[0] == 'W' ||
-				optarg[0] == 'k' || optarg[0] == 'w') {
-				rds_params.pi = callsign2pi((unsigned char *)optarg);
-			} else
-#endif
-				rds_params.pi = strtoul(optarg, NULL, 16);
+			rds_params.pi = strtoul(optarg, NULL, 16);
 			break;
 
 		case 's': /* ps */
@@ -255,9 +244,19 @@ keep_parsing_opts:
 			memcpy(rds_params.ptyn, xlat((unsigned char *)optarg), PTYN_LENGTH);
 			break;
 
+		case 'l': /* lps */
+			memcpy(rds_params.lps, (unsigned char *)optarg, LPS_LENGTH);
+			break;
+
 		case 'C': /* ctl */
 			memcpy(control_pipe, optarg, 50);
 			break;
+
+		#ifdef RDS2
+		case 'I': /* img */
+			memcpy(rds_params.rds2_image_path, optarg, 50);
+			break;
+		#endif
 
 		case 'v': /* version */
 			show_version();

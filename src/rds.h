@@ -76,6 +76,7 @@ typedef struct rds_params_t {
 	/* AF */
 	struct rds_af_t af;
 
+	/* ct */
 	uint8_t tx_ctime;
 
 	/* Long PS */
@@ -83,6 +84,11 @@ typedef struct rds_params_t {
 
 	/* eRT */
 	unsigned char ert[ERT_LENGTH];
+
+	#ifdef RDS2
+	/* RDS2 image path*/
+	char rds2_image_path[51];
+	#endif
 } rds_params_t;
 /* Here, the first member of the struct must be a scalar to avoid a
    warning on -Wmissing-braces with GCC < 4.8.3
@@ -267,7 +273,6 @@ typedef struct rds_oda_t {
 } rds_oda_t;
 
 #define MAX_ODAS	8
-
 
 /*
  * ODA AID

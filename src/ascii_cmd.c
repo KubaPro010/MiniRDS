@@ -43,12 +43,6 @@ void process_ascii_cmd(unsigned char *str) {
 
 		if (CMD_MATCHES("PI")) {
 			arg[4] = 0;
-#ifdef RBDS
-			if (arg[0] == 'K' || arg[0] == 'W' ||
-				arg[0] == 'k' || arg[0] == 'w') {
-				set_rds_pi(callsign2pi(arg));
-			} else
-#endif
 			set_rds_pi(strtoul((char *)arg, NULL, 16));
 			return;
 		}
@@ -60,6 +54,11 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("RT")) {
 			arg[RT_LENGTH * 2] = 0;
 			set_rds_rt(xlat(arg));
+			return;
+		}
+		if (CMD_MATCHES("CT"))
+		{
+			set_rds_ct(arg[0]);
 			return;
 		}
 		if (CMD_MATCHES("TA")) {
@@ -148,6 +147,7 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 		if (CMD_MATCHES("MPX")) {
+#ifdef RDS2
 			float gains[5];
 			if (sscanf((char *)arg, "%f,%f,%f,%f,%f",
 				&gains[0], &gains[1], &gains[2], &gains[3],
@@ -158,6 +158,15 @@ void process_ascii_cmd(unsigned char *str) {
 				set_carrier_volume(3, gains[3]);
 				set_carrier_volume(4, gains[4]);
 			}
+#else
+			float gains[2];
+			if (sscanf((char *)arg, "%f,%f",
+					   &gains[0], &gains[1]) == 2)
+			{
+				set_carrier_volume(0, gains[0]);
+				set_carrier_volume(1, gains[1]);
+			}
+#endif
 			return;
 		}
 		if (CMD_MATCHES("VOL")) {

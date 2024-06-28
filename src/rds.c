@@ -30,10 +30,11 @@ static struct rds_params_t rds_data;
 static struct {
 	uint8_t ps_update;
 	uint8_t rt_update;
-	uint8_t ab;
+	uint8_t rt_ab;
 	uint8_t rt_segments;
 	uint8_t rt_bursting;
 	uint8_t ptyn_update;
+	uint8_t ptyn_ab;
 
 	/* Long PS */
 	uint8_t lps_update;
@@ -157,13 +158,13 @@ static void get_rds_rt_group(uint16_t *blocks) {
 
 	if (rds_state.rt_update) {
 		memcpy(rt_text, rds_data.rt, RT_LENGTH);
-		rds_state.ab ^= 1;
+		rds_state.rt_ab ^= 1;
 		rds_state.rt_update = 0;
 		rt_state = 0; /* rewind when new RT arrives */
 	}
 
 	blocks[1] |= 2 << 12;
-	blocks[1] |= rds_state.ab << 4;
+	blocks[1] |= rds_state.rt_ab << 4;
 	blocks[1] |= rt_state;
 	blocks[2] =  rt_text[rt_state * 4    ] << 8;
 	blocks[2] |= rt_text[rt_state * 4 + 1];
@@ -213,7 +214,7 @@ static uint8_t get_rds_ct_group(uint16_t *blocks) {
 		l = utc->tm_mon <= 1 ? 1 : 0;
 		mjd = 14956 + utc->tm_mday +
 			(uint32_t)((utc->tm_year - l) * 365.25f) +
-			(uint32_t)((utc->tm_mon + 2 + l * 12) * 30.6001f);
+			(uint32_t)((utc->tm_mon + (1+1) + l * 12) * 30.6001f);
 
 		blocks[1] |= 4 << 12 | (mjd >> 15);
 		blocks[2] = (mjd << 1) | (utc->tm_hour >> 4);
@@ -249,7 +250,8 @@ static void get_rds_ptyn_group(uint16_t *blocks) {
 	}
 
 	blocks[1] |= 10 << 12 | ptyn_state;
-	blocks[2] =  ptyn_text[ptyn_state * 4    ] << 8;
+	blocks[1] |= rds_state.ptyn_ab << 4;
+	blocks[2] = ptyn_text[ptyn_state * 4] << 8;
 	blocks[2] |= ptyn_text[ptyn_state * 4 + 1];
 	blocks[3] =  ptyn_text[ptyn_state * 4 + 2] << 8;
 	blocks[3] |= ptyn_text[ptyn_state * 4 + 3];
@@ -521,7 +523,7 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 
 	set_rds_pi(rds_params.pi);
 	set_rds_ps(rds_params.ps);
-	rds_state.ab = 1;
+	rds_state.rt_ab = 1;
 	set_rds_rt(rds_params.rt);
 	set_rds_pty(rds_params.pty);
 	set_rds_ptyn(rds_params.ptyn);
@@ -543,7 +545,7 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	init_rds_objects();
 #ifdef RDS2
 	/* XXX: don't hardcode file paths */
-	init_rds2_encoder("/tmp/rds2-image/stationlogo.png");
+	init_rds2_encoder(rds_params.rds2_image_path);
 #endif
 }
 

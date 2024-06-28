@@ -19,10 +19,6 @@ RDS2_SYMBOL_SHIFTING = 1
 # RDS2 debugging
 RDS2_DEBUG = 0
 
-# NRSC RBDS (FCC)
-# Set to 1 for NRSC LF/MF AF coding and PTY list
-RBDS = 1
-
 # Use a static libsamplerate library (.a)
 # Disabled by default
 STATIC_LIBSAMPLERATE ?= 0
@@ -57,14 +53,6 @@ endif
 
 ifeq ($(RDS2_DEBUG), 1)
 	CFLAGS += -DRDS2_DEBUG
-endif
-
-ifeq ($(RBDS), 1)
-	CFLAGS += -DRBDS
-endif
-
-ifeq ($(CONTROL_PIPE_MESSAGES), 1)
-	CFLAGS += -DCONTROL_PIPE_MESSAGES
 endif
 
 all: $(name)

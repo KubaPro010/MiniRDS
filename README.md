@@ -8,8 +8,6 @@ This is based on the RDS encoder from [Mpxgen](https://github.com/Anthony96922/m
 
 ![MiniRDS on Eton/Tecsun](doc/mpxgen.jpg)
 
-This software is currently used as the RDS encoder for KPSK in Los Angeles, CA, USA.
-
 #### Features
 - Low resource requirements
 - Support for basic RDS data fields: PS, RT, PTY and AF
@@ -24,7 +22,6 @@ This software is currently used as the RDS encoder for KPSK in Los Angeles, CA, 
 - UECP
 - Configuration file
 
-RDS2 image reception in action: https://www.bitchute.com/video/sNXyTCCAYA8l/
 
 ## Build
 For Debian-like distros: `sudo apt-get install libao-dev libsamplerate0-dev` to install deps.
@@ -94,8 +91,6 @@ See the [command list](doc/command_list.md) for a complete list of valid command
 
 ### RDS2
 MiniRDS has a working implementation of the RFT protocol in RDS2. Please edit the Makefile accordingly and rebuild for RDS2 capabilities. You may use your own image by using the provided "make-station-logo.sh" script. Valid formats are PNG or JPG and should be about 3kB or less. Larger images take considerably longer to receive.
-
-![RDS2 RFT](doc/rds2-rft.png)
 
 ## References
 - [EN 50067, Specification of the radio data system (RDS) for VHF/FM sound broadcasting in the frequency range 87.5 to 108.0 MHz](http://www.interactive-radio-system.com/docs/EN50067_RDS_Standard.pdf)

@@ -51,17 +51,6 @@ int ustrcmp(const unsigned char *s1, const unsigned char *s2) {
 
 /* RDS PTY list */
 static char *ptys[32] = {
-#ifdef RBDS
-	/* NRSC RBDS */
-	"None", "News", "Information", "Sports",
-	"Talk", "Rock", "Classic rock", "Adult hits",
-	"Soft rock" , "Top 40", "Country", "Oldies",
-	"Soft music", "Nostalgia", "Jazz", "Classical",
-	"R&B", "Soft R&B", "Language", "Religious music",
-	"Religious talk", "Personality", "Public", "College",
-	"Spanish talk", "Spanish music", "Hip-Hop", "Unassigned",
-	"Unassigned", "Weather", "Emergency test", "Emergency"
-#else
 	/* ETSI */
 	"None", "News", "Current affairs", "Information",
 	"Sport", "Education", "Drama", "Culture", "Science",
@@ -72,7 +61,6 @@ static char *ptys[32] = {
 	"Leisure", "Jazz music", "Country music",
 	"National music", "Oldies music", "Folk music",
 	"Documentary", "Alarm test", "Alarm"
-#endif
 };
 
 char *get_pty_str(uint8_t pty_code) {
@@ -269,51 +257,6 @@ void add_checkwords(uint16_t *blocks, uint8_t *bits)
 	}
 }
 
-#ifdef RBDS
-/*
- * PI code calculator
- *
- * Calculates the PI code from a station's callsign.
- *
- * See
- * https://www.nrscstandards.org/standards-and-guidelines/documents/standards/nrsc-4-b.pdf
- * for more information.
- *
- */
-uint16_t callsign2pi(unsigned char *callsign) {
-	uint16_t pi_code = 0;
-
-	if (callsign[0] == 'K' || callsign[0] == 'k') {
-		pi_code += 4096;
-	} else if (callsign[0] == 'W' || callsign[0] == 'w') {
-		pi_code += 21672;
-	} else {
-		return 0;
-	}
-
-	/* Change nibbles to base-26 decimal */
-	pi_code +=
-		(callsign[1] - (callsign[1] >= 'a' ? 0x61 : 0x41)) * 676 +
-		(callsign[2] - (callsign[2] >= 'a' ? 0x61 : 0x41)) * 26 +
-		(callsign[3] - (callsign[3] >= 'a' ? 0x61 : 0x41));
-
-	/* Call letter exceptions */
-
-	/* When 3rd char is 0 */
-	if ((pi_code & 0x0F00) == 0) {
-		pi_code = 0xA000 +
-			((pi_code & 0xF000) >> 4) + (pi_code & 0x00FF);
-	}
-
-	/* When 1st & 2nd chars are 0 */
-	if ((pi_code & 0x00FF) == 0) {
-		pi_code = 0xAF00 + ((pi_code & 0xFF00) >> 8);
-	}
-
-	return pi_code;
-}
-#endif
-
 /*
  * AF stuff
  */
@@ -342,14 +285,6 @@ uint8_t add_rds_af(struct rds_af_t *af_list, float freq) {
 		af = (uint16_t)(freq * 10.0f) - 875;
 		af_list->afs[af_list->num_entries] = af;
 		af_list->num_entries += 1;
-#ifdef RBDS
-	} else if (freq >= 540.0f && freq <= 1700.0f) { /* AM 10 kHz spacing */
-		af = (uint16_t)(freq - 540.0f) / 10 + 17;
-		af_list->afs[af_list->num_entries + 0] = AF_CODE_LFMF_FOLLOWS;
-		af_list->afs[af_list->num_entries + 1] = af;
-		af_list->num_entries += 2;
-	} else {
-#else
 	} else if (freq >= 153.0f && freq <= 279.0f) { /* LF */
 		af = (uint16_t)(freq - 153.0f) / 9 + 1;
 		af_list->afs[af_list->num_entries + 0] = AF_CODE_LFMF_FOLLOWS;
@@ -361,7 +296,7 @@ uint8_t add_rds_af(struct rds_af_t *af_list, float freq) {
 		af_list->afs[af_list->num_entries + 1] = af;
 		af_list->num_entries += 2;
 	} else {
-#endif
+#
 		return 1;
 	}
 
@@ -386,11 +321,6 @@ char *show_af_list(struct rds_af_t af_list) {
 		}
 
 		if (is_lfmf) {
-#ifdef RBDS
-			/* MF (FCC) */
-			freq = 540.0f + ((float)(af_list.afs[i] - 17) * 10.0f);
-			outstrlen += sprintf(outstr + outstrlen, " (MF)%.0f", freq);
-#else
 			if (af_list.afs[i] >= 1 && af_list.afs[i] <= 15) { /* LF */
 				freq = 153.0f + ((float)(af_list.afs[i] -  1) * 9.0f);
 				outstrlen += sprintf(outstr + outstrlen, " (LF)%.0f", freq);
@@ -398,7 +328,6 @@ char *show_af_list(struct rds_af_t af_list) {
 				freq = 531.0f + ((float)(af_list.afs[i] - 16) * 9.0f);
 				outstrlen += sprintf(outstr + outstrlen, " (MF)%.0f", freq);
 			}
-#endif
 			is_lfmf = false;
 			continue;
 		}
@@ -607,43 +536,4 @@ unsigned char *xlat(unsigned char *str) {
 
 	new_str[i] = 0;
 	return new_str;
-}
-
-/*
- * TMC stuff (for future use)
- *
- * Based on the the implementation described here:
- * http://www.windytan.com/2013/05/a-determined-hacker-decrypts-rds-tmc.html
- */
-
-/*
- * bit rotation operations
- *
- */
-#define ROTR16(a, b) \
-	(((a) >> ((b) & 15)) | ((a) << (16 - ((b) & 15))))
-
-#define ROTL16(a, b) \
-	(((a) << ((b) & 15)) | ((a) >> (16 - ((b) & 15))))
-
-uint16_t tmc_encrypt(uint16_t loc, uint16_t key) {
-	uint16_t enc_loc;
-	uint16_t p1, p2;
-
-	p1 = ROTR16(loc, key >> 12);
-	p2 = (key & 255) << ((key >> 8) & 15);
-	enc_loc = p1 ^ p2;
-
-	return enc_loc;
-}
-
-uint16_t tmc_decrypt(uint16_t loc, uint16_t key) {
-	uint16_t dec_loc;
-	uint16_t p1, p2;
-
-	p1 = (key & 255) << ((key >> 8) & 15);
-	p2 = loc ^ p1;
-	dec_loc = ROTL16(p2, key >> 12);
-
-	return dec_loc;
 }
