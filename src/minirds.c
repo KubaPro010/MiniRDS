@@ -52,8 +52,8 @@ static inline void float2char2channel(
 
 		outbuf[k+0] = lower;
 		outbuf[k+1] = upper;
-		// outbuf[k+2] = lower;
-		// outbuf[k+3] = upper;
+		outbuf[k+2] = lower;
+		outbuf[k+3] = upper;
 
 		j += 2;
 		k += 2;
@@ -303,7 +303,7 @@ done_parsing_opts:
 
 	/* AO format */
 	memset(&format, 0, sizeof(struct ao_sample_format));
-	format.channels = 1;
+	format.channels = 2;
 	format.bits = 16;
 	format.rate = OUTPUT_SAMPLE_RATE;
 	format.byte_format = AO_FMT_LITTLE;
