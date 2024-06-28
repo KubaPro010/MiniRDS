@@ -103,9 +103,11 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -A,--af           Alternative Frequency (FM/LF/MF)\n"
 		"                        (more than one AF may be passed)\n"
 		"    -P,--ptyn         Program Type Name\n"
-		"\n"
 		"    -C,--ctl          FIFO control pipe\n"
-		"\n"
+		"    -l,--lps          Long PS\n"
+		#ifdef RDS2
+		"    -I,--img          RDS2 Logo\n"
+		#endif
 		"    -h,--help         Show this help text and exit\n"
 		"    -v,--version      Show version and exit\n"
 		"\n",
