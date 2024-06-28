@@ -75,6 +75,7 @@ static struct {
 } ert_cfg;
 #endif
 
+#ifdef ODA_ERTP
 /* eRT+ */
 static struct {
 	uint8_t group;
@@ -84,7 +85,9 @@ static struct {
 	uint8_t start[2];
 	uint8_t len[2];
 } ertplus_cfg;
+#endif
 
+#ifdef ODA
 static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
 
 	if (oda_state.count == MAX_ODAS) return; /* can't accept more ODAs */
