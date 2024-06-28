@@ -63,8 +63,3 @@ target_link_libraries(minirds PRIVATE m pthread ao)
 
 # Install target
 install(TARGETS minirds DESTINATION /usr/local/bin)
-
-# Clean target
-add_custom_target(clean
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/*.o
-)
