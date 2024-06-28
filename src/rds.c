@@ -498,12 +498,12 @@ static void get_rds_group(uint16_t *blocks) {
 		/* 0A */
 		get_rds_ps_group(blocks);
 		state++;
-	} else if(state > 4) {
+	} else if(state < 9) {
 		/* 2A */
 		get_rds_rt_group(blocks);
 		state++;
 	}
-	if (state >= 8) state = 0;
+	if (state >= 9) state = 0;
 
 group_coded:
 	/* for version B groups */
