@@ -189,12 +189,14 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_lps(arg);
 			return;
 		}
+		#ifdef ODA
 		if (CMD_MATCHES("ERT")) {
 			arg[ERT_LENGTH] = 0;
 			if (arg[0] == '-') arg[0] = 0;
 			set_rds_ert(arg);
 			return;
 		}
+		#endif
 	}
 
 	if (cmd_len > 5 && str[4] == ' ') {
