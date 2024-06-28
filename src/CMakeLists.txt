@@ -19,14 +19,6 @@ set(SOURCES
     minirds.c
     waveforms.c
     rds.c
-    fm_mpx.c
-    control_pipe.c
-    osc.c
-    resampler.c
-    modulator.c
-    lib.c
-    net.c
-    ascii_cmd.c
 )
 
 # Handle RDS2 options
@@ -45,6 +37,17 @@ if(RDS2_DEBUG)
     add_definitions(-DRDS2_DEBUG)
 endif()
 
+set(SOURCES
+    ${SOURCES}
+    fm_mpx.c
+    control_pipe.c
+    osc.c
+    resampler.c
+    modulator.c
+    lib.c
+    net.c
+    ascii_cmd.c
+)
 
 # Define the executable
 add_executable(minirds ${SOURCES})

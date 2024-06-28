@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
 	struct rds_params_t rds_params = {
 		.ps = "radio95",
 		.rt = "",
-		.pi = 0x1000
+		.pi = 0x3073
 	};
 	float volume = 50.0f;
 

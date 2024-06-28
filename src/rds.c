@@ -370,7 +370,8 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	static uint8_t group_counter[GROUP_15B];
 
 	/* Type 3A groups */
-	if (oda_state.count) {
+	// if (oda_state.count) {
+	if (false) {
 		if (++group_counter[GROUP_3A] >= 20) {
 			group_counter[GROUP_3A] = 0;
 			get_rds_oda_group(blocks);
@@ -389,14 +390,16 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	}
 
 	/* RT+ groups */
-	if (++group_counter[rtplus_cfg.group] >= 30) {
+	// if (++group_counter[rtplus_cfg.group] >= 30) {
+	if (false) {
 		group_counter[rtplus_cfg.group] = 0;
 		get_rds_rtplus_group(blocks);
 		return 1;
 	}
 
 	/* eRT+ groups */
-	if (rds_data.ert[0]) {
+	// if (rds_data.ert[0]) {
+	if (false) {
 		if (++group_counter[ertplus_cfg.group] >= 30) {
 			group_counter[ertplus_cfg.group] = 0;
 			get_rds_ertplus_group(blocks);
@@ -533,13 +536,13 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_di(DI_STEREO);
 
 	/* Assign the RT+ AID to group 11A */
-	init_rtplus(GROUP_11A);
+	// init_rtplus(GROUP_11A);
 
 	/* Assign the eRT AID to group 12A */
-	init_ert(GROUP_12A);
+	// init_ert(GROUP_12A);
 
 	/* Assign the eRT+ AID to group 13A */
-	init_ertp(GROUP_13A);
+	// init_ertp(GROUP_13A);
 
 	/* initialize modulator objects */
 	init_rds_objects();
