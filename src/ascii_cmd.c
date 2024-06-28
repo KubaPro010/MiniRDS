@@ -137,7 +137,7 @@ void process_ascii_cmd(unsigned char *str) {
 				set_rds_ecc(num);
 			return;
 		}
-		#ifdef ODA
+		#ifdef ODA_RTP
 		if (CMD_MATCHES("RTP")) {
 			char tag_names[2][32];
 			uint8_t tags[6];
@@ -189,7 +189,7 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_lps(arg);
 			return;
 		}
-		#ifdef ODA
+		#ifdef ODA_ERT
 		if (CMD_MATCHES("ERT")) {
 			arg[ERT_LENGTH] = 0;
 			if (arg[0] == '-') arg[0] = 0;
@@ -204,7 +204,7 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[4] = 0;
 		arg = str + 5;
 
-		#ifdef ODA
+		#ifdef ODA_RTP
 		if (CMD_MATCHES("RTPF")) {
 			arg[1] = 0;
 			set_rds_rtplus_flags(strtoul((char *)arg, NULL, 10));
@@ -217,7 +217,7 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_ptyn(xlat(arg));
 			return;
 		}
-		#ifdef ODA
+		#ifdef ODA_ERTP
 		if (CMD_MATCHES("ERTP")) {
 			char tag_names[2][32];
 			uint8_t tags[6];
@@ -242,7 +242,7 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[5] = 0;
 		arg = str + 6;
 
-		#ifdef ODA
+		#ifdef ODA_ERTP
 		if (CMD_MATCHES("ERTPF")) {
 			arg[1] = 0;
 			set_rds_ertplus_flags(strtoul((char *)arg, NULL, 10));

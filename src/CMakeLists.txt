@@ -4,7 +4,9 @@ cmake_minimum_required(VERSION 3.10)
 project(minirds VERSION 1.0)
 
 # Define options
-option(ODA "Enable ODA (RT+, eRT, eRT+)" OFF)
+option(ODA_ERT "Enable ODA (eRT)" OFF)
+option(ODA_RTP "Enable ODA (RT+)" OFF)
+option(ODA_ERTP "Enable ODA (eRT+)" OFF)
 
 option(RDS2 "Enable RDS2 capabilities" OFF)
 option(RDS2_QUADRATURE_CARRIER "Shift RDS2 stream carriers by 90, 180, and 270 degrees" ON)
@@ -42,8 +44,26 @@ if(RDS2_DEBUG)
     add_definitions(-DRDS2_DEBUG)
 endif()
 
-if(ODA)
-    add_definitions(-DODA)
+function(add_definition_if_not_exists DEF)
+    if(NOT DEFINED DEFINED_${DEF})
+        add_definitions(-D${DEF})
+        set(DEFINED_${DEF} ON CACHE INTERNAL "Definition ${DEF} added")
+    endif()
+endfunction()
+
+if(ODA_ERT)
+    add_definition_if_not_exists(ODA)
+    add_definitions(-DODA_ERT)
+endif()
+
+if(ODA_RTP)
+    add_definition_if_not_exists(ODA)
+    add_definitions(-DODA_RTP)
+endif()
+
+if(ODA_ERTP)
+    add_definition_if_not_exists(ODA)
+    add_definitions(-DODA_RTP)
 endif()
 
 set(SOURCES

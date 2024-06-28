@@ -79,7 +79,7 @@ uint8_t get_pty_code(char *pty_str) {
 	return pty_code;
 }
 
-#ifdef ODA
+#ifdef ODA_RTP
 static char *rtp_content_types[64] = {
 	/* dummy */
 	"DUMMY_CLASS",
@@ -345,7 +345,7 @@ char *show_af_list(struct rds_af_t af_list) {
  * UTF-8 to RDS char set converter
  *
  * Translates certain chars into their RDS equivalents
- * NOTE!! Only applies to PS and RT. ERT uses UTF-8 (SCB = 1)
+ * NOTE!! Only applies to PS, RT and PTYN. ERT and LPS use UTF-8 (SCB = 1)
  *
  */
 #define XLATSTRLEN	255

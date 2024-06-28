@@ -39,7 +39,7 @@ static struct {
 	uint8_t lps_update;
 	uint8_t lps_segments;
 
-	#ifdef ODA
+	#ifdef ODA_ERT
 	/* eRT */
 	uint8_t ert_update;
 	uint8_t ert_segments;
@@ -54,7 +54,9 @@ static struct {
 	uint8_t current;
 	uint8_t count;
 } oda_state;
+#endif
 
+#ifdef ODA_RTP
 /* RT+ */
 static struct {
 	uint8_t group;
@@ -64,11 +66,14 @@ static struct {
 	uint8_t start[2];
 	uint8_t len[2];
 } rtplus_cfg;
+#endif
 
+#ifdef ODA_ERT
 /* eRT */
 static struct {
 	uint8_t group;
 } ert_cfg;
+#endif
 
 /* eRT+ */
 static struct {
@@ -296,12 +301,14 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 }
 
 /* RT+ */
-#ifdef ODA
+#ifdef ODA_RTP
 static void init_rtplus(uint8_t group) {
 	register_oda(group, ODA_AID_RTPLUS, 0);
 	rtplus_cfg.group = group;
 }
+#endif
 
+#ifdef ODA_ERT
 /* eRT */
 static void init_ert(uint8_t group) {
 	if (GET_GROUP_VER(group) == 1) {
@@ -311,15 +318,18 @@ static void init_ert(uint8_t group) {
 	register_oda(group, ODA_AID_ERT, 1 /* UTF-8 */);
 	ert_cfg.group = group;
 }
+#endif
 
+#ifdef ODA_ERTP
 /* eRT+ */
 static void init_ertp(uint8_t group) {
 	register_oda(group, ODA_AID_ERTPLUS, 0);
 	ertplus_cfg.group = group;
 }
+#endif
 
-/* RT+ group
- */
+#ifdef ODA_RTP
+/* RT+ group */
 static void get_rds_rtplus_group(uint16_t *blocks) {
 	/* RT+ block format */
 	blocks[1] |= GET_GROUP_TYPE(rtplus_cfg.group) << 12;
@@ -336,7 +346,9 @@ static void get_rds_rtplus_group(uint16_t *blocks) {
 	blocks[3] |= (rtplus_cfg.start[1] & INT8_L6) << 5;
 	blocks[3] |= rtplus_cfg.len[1] & INT8_L5;
 }
+#endif
 
+#ifdef ODA_ERT
 /* eRT group */
 static void get_rds_ert_group(uint16_t *blocks) {
 	static unsigned char ert_text[ERT_LENGTH];
@@ -361,7 +373,9 @@ static void get_rds_ert_group(uint16_t *blocks) {
 	ert_state++;
 	if (ert_state == rds_state.ert_segments) ert_state = 0;
 }
+#endif
 
+#ifdef ODA_ERTP
 /* eRT+ group */
 static void get_rds_ertplus_group(uint16_t *blocks) {
 	/* RT+ block format */
@@ -427,7 +441,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	#endif
 
 	/* eRT+ groups */
-	#ifdef ODA
+	#ifdef ODA_ERT
 	if (rds_data.ert[0]) {
 		if (++group_counter[ertplus_cfg.group] >= 30) {
 			group_counter[ertplus_cfg.group] = 0;
@@ -460,7 +474,7 @@ static uint8_t get_rds_long_text_groups(uint16_t *blocks) {
 	case 0:
 	case 1:
 	case 2: /* eRT */
-		#ifdef ODA
+		#ifdef ODA_ERT
 		if (rds_data.ert[0]) {
 			get_rds_ert_group(blocks);
 			goto group_coded;
@@ -566,17 +580,17 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_di(DI_STEREO);
 
 	/* Assign the RT+ AID to group 11A */
-	#ifdef ODA
+	#ifdef ODA_RTP
 	init_rtplus(GROUP_11A);
 	#endif
 
 	/* Assign the eRT AID to group 12A */
-	#ifdef ODA
+	#ifdef ODA_ERT
 	init_ert(GROUP_12A);
 	#endif
 
 	/* Assign the eRT+ AID to group 13A */
-	#ifdef ODA
+	#ifdef ODA_ERTP
 	init_ertp(GROUP_13A);
 	#endif
 
@@ -629,7 +643,7 @@ void set_rds_rt(unsigned char *rt) {
 	}
 }
 
-#ifdef ODA
+#ifdef ODA_ERT
 void set_rds_ert(unsigned char *ert) {
 	uint8_t i = 0, len = 0;
 
@@ -702,7 +716,7 @@ void set_rds_lps(unsigned char *lps) {
 	}
 }
 
-#ifdef ODA
+#ifdef ODA_RTP
 void set_rds_rtplus_flags(uint8_t flags) {
 	rtplus_cfg.running	= (flags & INT8_1) >> 1;
 	rtplus_cfg.toggle	= flags & INT8_0;
@@ -716,7 +730,9 @@ void set_rds_rtplus_tags(uint8_t *tags) {
 	rtplus_cfg.start[1]	= tags[4] & INT8_L6;
 	rtplus_cfg.len[1]	= tags[5] & INT8_L5;
 }
+#endif
 
+#ifdef ODA_ERTP
 /* eRT+ */
 void set_rds_ertplus_flags(uint8_t flags) {
 	ertplus_cfg.running	= (flags & INT8_1) >> 1;
