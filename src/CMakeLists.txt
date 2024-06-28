@@ -14,6 +14,21 @@ set(LIBSAMPLERATE_DIR "./libsamplerate" CACHE STRING "Directory for static libsa
 # Set compiler and flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic -O2 -std=c18 -DVERSION=\"${PROJECT_VERSION}\"")
 
+# Define sources
+set(SOURCES
+    minirds.c
+    waveforms.c
+    rds.c
+    fm_mpx.c
+    control_pipe.c
+    osc.c
+    resampler.c
+    modulator.c
+    lib.c
+    net.c
+    ascii_cmd.c
+)
+
 # Handle RDS2 options
 if(RDS2)
     add_definitions(-DRDS2)
@@ -30,20 +45,6 @@ if(RDS2_DEBUG)
     add_definitions(-DRDS2_DEBUG)
 endif()
 
-# Define sources
-set(SOURCES
-    minirds.c
-    waveforms.c
-    rds.c
-    fm_mpx.c
-    control_pipe.c
-    osc.c
-    resampler.c
-    modulator.c
-    lib.c
-    net.c
-    ascii_cmd.c
-)
 
 # Define the executable
 add_executable(minirds ${SOURCES})
