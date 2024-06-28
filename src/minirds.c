@@ -46,17 +46,17 @@ static inline void float2char2channel(
 		sample = lroundf((inbuf[j] + inbuf[j+1]) * 16383.5f);
 
 		/* convert from short to char */
-		lower = sample & 255;
+		lower = sample & 0xFF;
 		sample >>= 8;
-		upper = sample & 255;
+		upper = sample & 0xFF;
 
 		outbuf[k+0] = lower;
 		outbuf[k+1] = upper;
-		outbuf[k+2] = lower;
-		outbuf[k+3] = upper;
+		// outbuf[k+2] = lower;
+		// outbuf[k+3] = upper;
 
 		j += 2;
-		k += 4;
+		k += 2;
 	}
 }
 
@@ -303,7 +303,7 @@ done_parsing_opts:
 
 	/* AO format */
 	memset(&format, 0, sizeof(struct ao_sample_format));
-	format.channels = 2;
+	format.channels = 1;
 	format.bits = 16;
 	format.rate = OUTPUT_SAMPLE_RATE;
 	format.byte_format = AO_FMT_LITTLE;

@@ -564,18 +564,23 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_di(DI_STEREO);
 
 	/* Assign the RT+ AID to group 11A */
-	// init_rtplus(GROUP_11A);
+	#ifdef ODA
+	init_rtplus(GROUP_11A);
+	#endif
 
 	/* Assign the eRT AID to group 12A */
-	// init_ert(GROUP_12A);
+	#ifdef ODA
+	init_ert(GROUP_12A);
+	#endif
 
 	/* Assign the eRT+ AID to group 13A */
-	// init_ertp(GROUP_13A);
+	#ifdef ODA
+	init_ertp(GROUP_13A);
+	#endif
 
 	/* initialize modulator objects */
 	init_rds_objects();
 #ifdef RDS2
-	/* XXX: don't hardcode file paths */
 	init_rds2_encoder(rds_params.rds2_image_path);
 #endif
 }
