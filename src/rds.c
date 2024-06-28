@@ -669,6 +669,7 @@ void set_rds_lps(unsigned char *lps) {
 	}
 }
 
+#ifdef ODA
 void set_rds_rtplus_flags(uint8_t flags) {
 	rtplus_cfg.running	= (flags & INT8_1) >> 1;
 	rtplus_cfg.toggle	= flags & INT8_0;
@@ -697,6 +698,7 @@ void set_rds_ertplus_tags(uint8_t *tags) {
 	ertplus_cfg.start[1]	= tags[4] & INT8_L6;
 	ertplus_cfg.len[1]	= tags[5] & INT8_L5;
 }
+#endif
 
 void set_rds_af(struct rds_af_t new_af_list) {
 	memcpy(&rds_data.af, &new_af_list, sizeof(struct rds_af_t));

@@ -130,6 +130,7 @@ void process_ascii_cmd(unsigned char *str) {
 			}
 			return;
 		}
+		#ifdef ODA
 		if (CMD_MATCHES("RTP")) {
 			char tag_names[2][32];
 			uint8_t tags[6];
@@ -146,6 +147,7 @@ void process_ascii_cmd(unsigned char *str) {
 			}
 			return;
 		}
+		#endif
 		if (CMD_MATCHES("MPX")) {
 #ifdef RDS2
 			float gains[5];
@@ -193,17 +195,20 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[4] = 0;
 		arg = str + 5;
 
+		#ifdef ODA
 		if (CMD_MATCHES("RTPF")) {
 			arg[1] = 0;
 			set_rds_rtplus_flags(strtoul((char *)arg, NULL, 10));
 			return;
 		}
+		#endif
 		if (CMD_MATCHES("PTYN")) {
 			arg[PTYN_LENGTH] = 0;
 			if (arg[0] == '-') arg[0] = 0;
 			set_rds_ptyn(arg);
 			return;
 		}
+		#ifdef ODA
 		if (CMD_MATCHES("ERTP")) {
 			char tag_names[2][32];
 			uint8_t tags[6];
@@ -220,6 +225,7 @@ void process_ascii_cmd(unsigned char *str) {
 			}
 			return;
 		}
+		#endif
 	}
 
 	if (cmd_len > 6 && str[5] == ' ') {
@@ -227,10 +233,12 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[5] = 0;
 		arg = str + 6;
 
+		#ifdef ODA
 		if (CMD_MATCHES("ERTPF")) {
 			arg[1] = 0;
 			set_rds_ertplus_flags(strtoul((char *)arg, NULL, 10));
 			return;
 		}
+		#endif
 	}
 }
