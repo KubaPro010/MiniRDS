@@ -32,7 +32,6 @@ static struct {
 	uint8_t rt_update;
 	uint8_t rt_ab;
 	uint8_t rt_segments;
-	uint8_t rt_bursting;
 	uint8_t ptyn_update;
 	uint8_t ptyn_ab;
 
@@ -156,8 +155,6 @@ static void get_rds_rt_group(uint16_t *blocks) {
 	static unsigned char rt_text[RT_LENGTH];
 	static uint8_t rt_state;
 
-	if (rds_state.rt_bursting) rds_state.rt_bursting--;
-
 	if (rds_state.rt_update) {
 		memcpy(rt_text, rds_data.rt, RT_LENGTH);
 		rds_state.rt_ab ^= 1;
@@ -228,13 +225,9 @@ static uint8_t get_rds_ct_group(uint16_t *blocks) {
 		local_time = localtime(&now);
 
 		/* tm_gmtoff doesn't exist in POSIX but __tm_gmtoff does */
-		offset = local_time->__tm_gmtoff / (30 * 60);
-		if (offset < 0) {
-			blocks[3] |= 1 << 5;
-			blocks[3] |= abs(offset);
-		} else {
-			blocks[3] |= offset;
-		}
+		offset = local_time->__tm_gmtoff / (30 * 60); /*__tm_gmtoff is time in seconds from utc, so utc + __tm_gmtoff = local time*/
+		if (offset < 0) blocks[3] |= 1 << 5;
+		blocks[3] |= abs(offset);
 
 		return 1;
 	}
@@ -255,7 +248,7 @@ static void get_rds_ptyn_group(uint16_t *blocks) {
 
 	blocks[1] |= 10 << 12 | ptyn_state;
 	blocks[1] |= rds_state.ptyn_ab << 4;
-	blocks[2] = ptyn_text[ptyn_state * 4] << 8;
+	blocks[2] =  ptyn_text[ptyn_state * 4 + 0] << 8;
 	blocks[2] |= ptyn_text[ptyn_state * 4 + 1];
 	blocks[3] =  ptyn_text[ptyn_state * 4 + 2] << 8;
 	blocks[3] |= ptyn_text[ptyn_state * 4 + 3];
@@ -282,6 +275,17 @@ static void get_rds_lps_group(uint16_t *blocks) {
 
 	lps_state++;
 	if (lps_state == rds_state.lps_segments) lps_state = 0;
+}
+
+static void get_rds_ecc_group(uint16_t *blocks) {
+	blocks[1] |= 1 << 12;
+	blocks[2] = rds_data.ecc;
+	/*
+	PIN
+	blocks[3] = rds_data.pin_day << 11
+	blocks[3] |= rds_data.pin_hour << 6
+	blocks[3] |= rds_data.pin_minute
+	*/
 }
 
 /* RT+ */
@@ -374,6 +378,16 @@ static void get_rds_ertplus_group(uint16_t *blocks) {
  */
 static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	static uint8_t group_counter[GROUP_15B];
+
+	/* Type 1A groups */
+	if (rds_data.ecc) {
+		if (++group_counter[GROUP_1A] >= 6) {
+			group_counter[GROUP_1A] = 0;
+			/* Do not generate a 10A group if PTYN is off */
+			get_rds_ecc_group(blocks);
+			return 1;
+		}
+	}
 
 	/* Type 3A groups */
 	#ifdef ODA
@@ -569,6 +583,10 @@ void set_rds_pi(uint16_t pi_code) {
 	rds_data.pi = pi_code;
 }
 
+void set_rds_ecc(uint8_t ecc) {
+	rds_data.ecc = ecc & INT8_ALL;
+}
+
 void set_rds_rt(unsigned char *rt) {
 	uint8_t i = 0, len = 0;
 
@@ -594,8 +612,6 @@ void set_rds_rt(unsigned char *rt) {
 		/* Default to 16 if RT is 64 characters long */
 		rds_state.rt_segments = 16;
 	}
-
-	rds_state.rt_bursting = rds_state.rt_segments;
 }
 
 void set_rds_ert(unsigned char *ert) {
@@ -741,6 +757,7 @@ void set_rds_ms(uint8_t ms) {
 void set_rds_di(uint8_t di) {
 	rds_data.di = di & INT8_L4;
 }
+
 
 void set_rds_ct(uint8_t ct) {
 	rds_data.tx_ctime = ct & INT8_0;

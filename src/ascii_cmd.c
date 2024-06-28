@@ -130,6 +130,13 @@ void process_ascii_cmd(unsigned char *str) {
 			}
 			return;
 		}
+		if (CMD_MATCHES("ECC")) {
+			arg[2] = 0;
+			unsigned long num = strtoul((char *)arg, NULL, 16);
+			if (num >= 0xE0 && num <= 0xE4)
+				set_rds_ecc(num);
+			return;
+		}
 		#ifdef ODA
 		if (CMD_MATCHES("RTP")) {
 			char tag_names[2][32];
@@ -205,7 +212,7 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("PTYN")) {
 			arg[PTYN_LENGTH] = 0;
 			if (arg[0] == '-') arg[0] = 0;
-			set_rds_ptyn(arg);
+			set_rds_ptyn(xlat(arg));
 			return;
 		}
 		#ifdef ODA
