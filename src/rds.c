@@ -78,15 +78,15 @@ static struct {
 	uint8_t len[2];
 } ertplus_cfg;
 
-static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
+// static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
 
-	if (oda_state.count == MAX_ODAS) return; /* can't accept more ODAs */
+// 	if (oda_state.count == MAX_ODAS) return; /* can't accept more ODAs */
 
-	odas[oda_state.count].group = group;
-	odas[oda_state.count].aid = aid;
-	odas[oda_state.count].scb = scb;
-	oda_state.count++;
-}
+// 	odas[oda_state.count].group = group;
+// 	odas[oda_state.count].aid = aid;
+// 	odas[oda_state.count].scb = scb;
+// 	oda_state.count++;
+// }
 
 /* Get the next AF entry
  */
