@@ -281,26 +281,26 @@ static void get_rds_lps_group(uint16_t *blocks) {
 }
 
 /* RT+ */
-static void init_rtplus(uint8_t group) {
-	register_oda(group, ODA_AID_RTPLUS, 0);
-	rtplus_cfg.group = group;
-}
+// static void init_rtplus(uint8_t group) {
+// 	register_oda(group, ODA_AID_RTPLUS, 0);
+// 	rtplus_cfg.group = group;
+// }
 
 /* eRT */
-static void init_ert(uint8_t group) {
-	if (GET_GROUP_VER(group) == 1) {
-		/* type B groups cannot be used for eRT */
-		return;
-	}
-	register_oda(group, ODA_AID_ERT, 1 /* UTF-8 */);
-	ert_cfg.group = group;
-}
+// static void init_ert(uint8_t group) {
+// 	if (GET_GROUP_VER(group) == 1) {
+// 		/* type B groups cannot be used for eRT */
+// 		return;
+// 	}
+// 	register_oda(group, ODA_AID_ERT, 1 /* UTF-8 */);
+// 	ert_cfg.group = group;
+// }
 
 /* eRT+ */
-static void init_ertp(uint8_t group) {
-	register_oda(group, ODA_AID_ERTPLUS, 0);
-	ertplus_cfg.group = group;
-}
+// static void init_ertp(uint8_t group) {
+// 	register_oda(group, ODA_AID_ERTPLUS, 0);
+// 	ertplus_cfg.group = group;
+// }
 
 /* RT+ group
  */
