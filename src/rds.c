@@ -151,7 +151,7 @@ static void get_rds_ps_group(uint16_t *blocks) {
 
 /* RT group (2A)
  */
-static void get_rds_rt_group(uint16_t *blocks) {
+static uint8_t get_rds_rt_group(uint16_t *blocks) {
 	static unsigned char rt_text[RT_LENGTH];
 	static uint8_t rt_state;
 
@@ -160,6 +160,10 @@ static void get_rds_rt_group(uint16_t *blocks) {
 		rds_state.rt_ab ^= 1;
 		rds_state.rt_update = 0;
 		rt_state = 0; /* rewind when new RT arrives */
+	}
+
+	if(rt_text[0] == "\r") {
+		return 0;
 	}
 
 	blocks[1] |= 2 << 12;
@@ -172,6 +176,7 @@ static void get_rds_rt_group(uint16_t *blocks) {
 
 	rt_state++;
 	if (rt_state == rds_state.rt_segments) rt_state = 0;
+	return 1;
 }
 
 /* ODA group (3A)
@@ -514,7 +519,9 @@ static void get_rds_group(uint16_t *blocks) {
 		state++;
 	} else if(state < 9) {
 		/* 2A */
-		get_rds_rt_group(blocks);
+		if(!get_rds_rt_group(blocks)) {
+			get_rds_ps_group(blocks);
+		}
 		state++;
 	}
 	if (state >= 9) state = 0;

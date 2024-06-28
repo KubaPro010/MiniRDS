@@ -79,6 +79,7 @@ uint8_t get_pty_code(char *pty_str) {
 	return pty_code;
 }
 
+#ifdef ODA
 static char *rtp_content_types[64] = {
 	/* dummy */
 	"DUMMY_CLASS",
@@ -169,7 +170,7 @@ char *get_rtp_tag_name(uint8_t rtp_tag) {
 	if (rtp_tag > 63) rtp_tag = 0;
 	return rtp_content_types[rtp_tag];
 }
-
+#endif
 static uint16_t offset_words[] = {
 	0x0FC, /*  A  */
 	0x198, /*  B  */
