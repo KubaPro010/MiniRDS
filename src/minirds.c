@@ -91,15 +91,15 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -m,--volume       Output volume\n"
 		"\n"
 		"    -i,--pi           Program Identification code\n"
-		"                        [default: %04X]\n"
+		"                        [default: 3073]\n"
 		"    -s,--ps           Program Service name\n"
-		"                        [default: \"%s\"]\n"
+		"                        [default: \"radio95\"]\n"
 		"    -r,--rt           Radio Text\n"
-		"                        [default: \"%s\"]\n"
+		"                        [default: (nothing)]\n"
 		"    -p,--pty          Program Type\n"
-		"                        [default: %u]\n"
+		"                        [default: 0]\n"
 		"    -T,--tp           Traffic Program\n"
-		"                        [default: %u]\n"
+		"                        [default: 0]\n"
 		"    -A,--af           Alternative Frequency (FM/LF/MF)\n"
 		"                        (more than one AF may be passed)\n"
 		"    -P,--ptyn         Program Type Name\n"
@@ -112,10 +112,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -v,--version      Show version and exit\n"
 		"\n",
 		VERSION,
-		name,
-		def_params.pi, def_params.ps,
-		def_params.rt, def_params.pty,
-		def_params.tp
+		name
 	);
 }
 
@@ -138,7 +135,8 @@ int main(int argc, char **argv) {
 	struct rds_params_t rds_params = {
 		.ps = "radio95",
 		.rt = "",
-		.pi = 0x3073
+		.pi = 0x3073,
+		.ecc = 0xE2
 	};
 	float volume = 80.0f;
 
@@ -172,7 +170,7 @@ int main(int argc, char **argv) {
 	pthread_mutex_t net_ctl_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t net_ctl_cond;
 
-	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:C:"
+	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:e:C:"
 	#ifdef RDS2
 	"I:"
 	#endif
@@ -191,6 +189,7 @@ int main(int argc, char **argv) {
 		{"af",		required_argument, NULL, 'A'},
 		{"ptyn",	required_argument, NULL, 'P'},
 		{"lps",    	required_argument, NULL, 'l'},
+		{"ecc",    	required_argument, NULL, 'e'},
 		{"ctl",		required_argument, NULL, 'C'},
 		#ifdef RDS2
 		{"img",		required_argument, NULL, 'I'},
@@ -248,6 +247,10 @@ keep_parsing_opts:
 
 		case 'l': /* lps */
 			memcpy(rds_params.lps, (unsigned char *)optarg, LPS_LENGTH);
+			break;
+
+		case 'e': /* ecc */
+			rds_params.ecc = strtoul(optarg, NULL, 16);
 			break;
 
 		case 'C': /* ctl */
