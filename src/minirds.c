@@ -81,7 +81,7 @@ static void *net_ctl_worker() {
 	pthread_exit(NULL);
 }
 
-static void show_help(char *name, struct rds_params_t def_params) {
+static void show_help(char *name) {
 	printf(
 		"This is MiniRDS, a lightweight RDS encoder.\n"
 		"Version %f\n"
@@ -270,7 +270,7 @@ keep_parsing_opts:
 		case 'h': /* help */
 		case '?':
 		default:
-			show_help(argv[0], rds_params);
+			show_help(argv[0]);
 			return 1;
 	}
 
