@@ -558,6 +558,7 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_pty(rds_params.pty);
 	set_rds_ptyn(rds_params.ptyn);
 	set_rds_tp(rds_params.tp);
+	set_rds_ecc(rds_params.ecc);
 	set_rds_ct(1);
 	set_rds_ms(1);
 	set_rds_di(DI_STEREO);
