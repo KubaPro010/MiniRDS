@@ -33,7 +33,7 @@
  */
 static void create_wave(uint32_t rate, float freq,
 		float *sin_wave, float *cos_wave, float* sin_wave_out_of_phase, uint16_t *max_phase) {
-	double sin_sample, cos_sample, sin_wave_out_of_phase;
+	double sin_sample, cos_sample, sin_wave_out_of_phase_sample;
 	/* used to determine if we have completed a cycle */
 	uint8_t zero_crossings = 0;
 	uint16_t i = 1;
