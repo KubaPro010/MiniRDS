@@ -48,12 +48,12 @@ void set_output_volume(float vol) {
 /* subcarrier volumes */
 static float volumes[MPX_SUBCARRIER_END] = {
 	0.0f, /* pilot tone: 0% */
-	0.1f, /* RDS: 10% modulation */
+	0.09f, /* RDS: 9% modulation */
 #ifdef RDS2
 	/* RDS2 */
 	0.029f, //67 khz 2.9%
-	0.029f, //71 khz 2.9%
-	0.028f  //76 khz 2.8%
+	0.023f, //71 khz 2.3%
+	0.016f  //76 khz 1.6%
 #endif
 };
 
