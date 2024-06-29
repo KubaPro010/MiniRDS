@@ -92,9 +92,6 @@ void fm_rds_get_frames(float *outbuf, size_t num_frames) {
 		out += osc_get_sin(&osc_57k)
 			* get_rds_sample(0)
 			* volumes[MPX_SUBCARRIER_RDS_STREAM_0];
-
-		out += osc_get_sin_oup(&osc_57k)
-			* volumes[MPX_SUBCARRIER_RDS_STREAM_0];
 #ifdef RDS2
 #ifdef RDS2_QUADRATURE_CARRIER
 		/* RDS2 is quadrature phase */

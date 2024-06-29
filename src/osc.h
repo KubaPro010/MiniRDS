@@ -45,7 +45,6 @@ typedef struct osc_t {
 
 extern void osc_init(struct osc_t *osc, uint32_t sample_rate,
 	const float freq);
-extern float osc_get_sin_oup(struct osc_t *osc);
 extern float osc_get_sin(struct osc_t *osc);
 extern float osc_get_cos(struct osc_t *osc);
 extern void osc_update_pos(struct osc_t *osc);
