@@ -18,15 +18,27 @@ This is based on the RDS encoder from [Mpxgen](https://github.com/Anthony96922/m
 - UECP
 - Configuration file
 
+## What are the changes from normal MiniRDS?
+- CMake
+- better arguments
+- Option to disable ODA (to not get that ODA AID thing)
+- Better Group Sequence (original had 0A 2A but here it is 0A 0A 0A 0A 2A 2A 2A 2A (2A) so PS appear instantly and RT is fast)
+
 
 ## Build
 For Debian-like distros: `sudo apt-get install libao-dev libsamplerate0-dev` to install deps.
 
+Note that MiniRDS requires CMake to compile
+
 Once those are installed, run
 ```sh
-git clone https://github.com/Anthony96922/MiniRDS
-cd MiniRDS/src
+git clone https://flerken.zapto.org:1115/kuba/minirds
+cd minirds/src
+mkdir build
+cd build
+cmake ..
 make
+sudo make install
 ```
 
 ## How to use
