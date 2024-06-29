@@ -133,7 +133,7 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("ECC")) {
 			arg[2] = 0;
 			unsigned long num = strtoul((char *)arg, NULL, 16);
-			if (num >= 0xE0 && num <= 0xE4)
+			if (num >= 0xD0 && num <= 0xF4)
 				set_rds_ecc(num);
 			else if(num == 0)
 				/* we wouldn't be able to disable it*/
