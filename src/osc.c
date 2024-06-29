@@ -31,7 +31,7 @@
  *
  * Create wave constants for a given frequency
  */
-static void create_wave(uint32_t rate, float freq, float phase_in_deg,
+static void create_wave(uint32_t rate, float freq,
 		float *sin_wave, float *cos_wave, uint16_t *max_phase) {
 	double sin_sample, cos_sample;
 	/* used to determine if we have completed a cycle */
@@ -46,8 +46,8 @@ static void create_wave(uint32_t rate, float freq, float phase_in_deg,
 
 	while (zero_crossings < 2 && i < rate) {
 		phase = (double)i / (double)rate;
-		sin_sample = sin(w * phase + ((phase_in_deg / 360.0f)*M_2PI));
-		cos_sample = cos(w * phase + ((phase_in_deg / 360.0f)*M_2PI));
+		sin_sample = sin(w * phase);
+		cos_sample = cos(w * phase);
 		if (sin_sample > -0.1e-4 && sin_sample < 0.1e-4) {
 			zero_crossings++;
 			sin_sample = 0.0f;
@@ -64,7 +64,7 @@ static void create_wave(uint32_t rate, float freq, float phase_in_deg,
  * Oscillator object initialization
  *
  */
-void osc_init(struct osc_t *osc, uint32_t sample_rate, float freq, float phase) {
+void osc_init(struct osc_t *osc, uint32_t sample_rate, float freq) {
 
 	/* sample rate for the objects */
 	osc->sample_rate = sample_rate;
@@ -77,7 +77,7 @@ void osc_init(struct osc_t *osc, uint32_t sample_rate, float freq, float phase) 
 	osc->cur = 0;
 
 	/* create waveform data and load into lookup tables */
-	create_wave(osc->sample_rate, freq, phase,
+	create_wave(osc->sample_rate, freq,
 		osc->sin_wave, osc->cos_wave,
 		&osc->max);
 }

@@ -69,12 +69,12 @@ void set_carrier_volume(uint8_t carrier, float new_volume) {
 
 void fm_mpx_init(uint32_t sample_rate) {
 	/* initialize the subcarrier oscillators */
-	osc_init(&osc_19k, sample_rate, 19000.0f, 0);
-	osc_init(&osc_57k, sample_rate, 57000.0f, 0);
+	osc_init(&osc_19k, sample_rate, 19000.0f);
+	osc_init(&osc_57k, sample_rate, 57000.0f);
 #ifdef RDS2
-	osc_init(&osc_67k, sample_rate, 66500.0f, 0);
-	osc_init(&osc_71k, sample_rate, 71250.0f, 0);
-	osc_init(&osc_76k, sample_rate, 76000.0f, 0);
+	osc_init(&osc_67k, sample_rate, 66500.0f);
+	osc_init(&osc_71k, sample_rate, 71250.0f);
+	osc_init(&osc_76k, sample_rate, 76000.0f);
 #endif
 }
 
