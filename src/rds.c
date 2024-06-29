@@ -43,7 +43,6 @@ static struct {
 	/* eRT */
 	uint8_t ert_update;
 	uint8_t ert_segments;
-	uint8_t ert_bursting;
 	#endif
 } rds_state;
 
@@ -360,8 +359,6 @@ static void get_rds_ert_group(uint16_t *blocks) {
 	static unsigned char ert_text[ERT_LENGTH];
 	static uint8_t ert_state;
 
-	if (rds_state.ert_bursting) rds_state.ert_bursting--;
-
 	if (rds_state.ert_update) {
 		memcpy(ert_text, rds_data.ert, ERT_LENGTH);
 		rds_state.ert_update = 0;
@@ -408,7 +405,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 
 	/* Type 1A groups */
 	if (rds_data.ecc) {
-		if (++group_counter[GROUP_1A] >= 19) {
+		if (++group_counter[GROUP_1A] >= 22) {
 			group_counter[GROUP_1A] = 0;
 			get_rds_ecc_group(blocks);
 			return 1;
@@ -418,7 +415,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	/* Type 3A groups */
 	#ifdef ODA
 	if (oda_state.count) {
-		if (++group_counter[GROUP_3A] >= 20) {
+		if (++group_counter[GROUP_3A] >= 25) {
 			group_counter[GROUP_3A] = 0;
 			get_rds_oda_group(blocks);
 			return 1;
@@ -428,7 +425,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 
 	/* Type 10A groups */
 	if (rds_data.ptyn[0]) {
-		if (++group_counter[GROUP_10A] >= 10) {
+		if (++group_counter[GROUP_10A] >= 13) {
 			group_counter[GROUP_10A] = 0;
 			/* Do not generate a 10A group if PTYN is off */
 			get_rds_ptyn_group(blocks);
@@ -497,11 +494,11 @@ static uint8_t get_rds_long_text_groups(uint16_t *blocks) {
 	}
 
 	/* if no group was coded */
-	if (++group_selector == 4) group_selector = 0;
+	if (++group_selector >= 8) group_selector = 0;
 	return 0;
 
 group_coded:
-	if (++group_selector == 4) group_selector = 0;
+	if (++group_selector >= 8) group_selector = 0;
 	return 1;
 }
 
@@ -680,8 +677,6 @@ void set_rds_ert(unsigned char *ert) {
 		/* Default to 32 if eRT is 128 characters long */
 		rds_state.ert_segments = 32;
 	}
-
-	rds_state.ert_bursting = rds_state.ert_segments;
 }
 #endif
 
