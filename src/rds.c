@@ -621,6 +621,10 @@ void set_rds_ecc(uint8_t ecc) {
 	rds_data.ecc = ecc;
 }
 
+void set_rds_rt_ab(uint8_t ab) {
+	rds_state.rt_ab = ab & INT8_0;
+}
+
 void set_rds_rt(unsigned char *rt) {
 	uint8_t i = 0, len = 0;
 
