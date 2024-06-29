@@ -52,11 +52,12 @@ static inline void float2char2channel(
 
 		outbuf[k+0] = lower;
 		outbuf[k+1] = upper;
-		outbuf[k+2] = lower;
-		outbuf[k+3] = upper;
+		// outbuf[k+2] = lower;
+		// outbuf[k+3] = upper;
 
 		j += 2;
-		k += 4;
+		// k += 4;
+		k += 2;
 	}
 }
 
@@ -289,9 +290,9 @@ done_parsing_opts:
 	pthread_attr_init(&attr);
 
 	/* Setup buffers */
-	mpx_buffer = malloc(NUM_MPX_FRAMES_IN * 2 * sizeof(float));
-	out_buffer = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(float));
-	dev_out = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(int16_t) * sizeof(char));
+	mpx_buffer = malloc(NUM_MPX_FRAMES_IN * 1 * sizeof(float));
+	out_buffer = malloc(NUM_MPX_FRAMES_OUT * 1 * sizeof(float));
+	dev_out = malloc(NUM_MPX_FRAMES_OUT * 1 * sizeof(int16_t) * sizeof(char));
 
 	/* Gracefully stop the encoder on SIGINT or SIGTERM */
 	signal(SIGINT, stop);
@@ -306,7 +307,7 @@ done_parsing_opts:
 
 	/* AO format */
 	memset(&format, 0, sizeof(struct ao_sample_format));
-	format.channels = 2; /* can't we go mono? why waste resources on 2 identical channels */
+	format.channels = 1; /* can't we go mono? why waste resources on 2 identical channels */
 	format.bits = 16;
 	format.rate = OUTPUT_SAMPLE_RATE;
 	format.byte_format = AO_FMT_LITTLE;
@@ -329,7 +330,7 @@ done_parsing_opts:
 	src_data.data_in = mpx_buffer;
 	src_data.data_out = out_buffer;
 
-	r = resampler_init(&src_state, 2);
+	r = resampler_init(&src_state, 1);
 	if (r < 0) {
 		fprintf(stderr, "Could not create output resampler.\n");
 		goto exit;
@@ -378,7 +379,7 @@ done_parsing_opts:
 		float2char2channel(out_buffer, dev_out, frames);
 
 		/* num_bytes = audio frames * channels * bytes per sample */
-		if (!ao_play(device, dev_out, frames * 2 * sizeof(int16_t))) {
+		if (!ao_play(device, dev_out, frames * 1 * sizeof(int16_t))) {
 			fprintf(stderr, "Error: could not play audio.\n");
 			break;
 		}
