@@ -82,7 +82,7 @@ void osc_init(struct osc_t *osc, uint32_t sample_rate, float freq) {
 
 	/* create waveform data and load into lookup tables */
 	create_wave(osc->sample_rate, freq,
-		osc->sin_wave, osc->cos_wave, osc->sin_wave_out_of_phase
+		osc->sin_wave, osc->cos_wave, osc->sin_wave_out_of_phase,
 		&osc->max);
 }
 
