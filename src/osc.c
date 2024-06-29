@@ -32,8 +32,8 @@
  * Create wave constants for a given frequency
  */
 static void create_wave(uint32_t rate, float freq,
-		float *sin_wave, float *cos_wave, uint16_t *max_phase) {
-	double sin_sample, cos_sample;
+		float *sin_wave, float *cos_wave, float* sin_wave_out_of_phase, uint16_t *max_phase) {
+	double sin_sample, cos_sample, sin_wave_out_of_phase;
 	/* used to determine if we have completed a cycle */
 	uint8_t zero_crossings = 0;
 	uint16_t i = 1;
@@ -42,16 +42,19 @@ static void create_wave(uint32_t rate, float freq,
 
 	/* First value of a sine wave is always 0 */
 	*sin_wave++ = 0.0f;
+	*sin_wave_out_of_phase++ = 0.0f;
 	*cos_wave++ = 1.0f;
 
 	while (zero_crossings < 2 && i < rate) {
 		phase = (double)i / (double)rate;
+		sin_wave_out_of_phase_sample = sin(w * phase + ((180 / 360.0f)*M_2PI));
 		sin_sample = sin(w * phase);
 		cos_sample = cos(w * phase);
 		if (sin_sample > -0.1e-4 && sin_sample < 0.1e-4) {
 			zero_crossings++;
 			sin_sample = 0.0f;
 		}
+		*sin_wave_out_of_phase++ = (float)sin_wave_out_of_phase_sample;
 		*sin_wave++ = (float)sin_sample;
 		*cos_wave++ = (float)cos_sample;
 		i++;
@@ -70,6 +73,7 @@ void osc_init(struct osc_t *osc, uint32_t sample_rate, float freq) {
 	osc->sample_rate = sample_rate;
 
 	/* waveform tables */
+	osc->sin_wave_out_of_phase = malloc(osc->sample_rate * sizeof(float));
 	osc->sin_wave = malloc(osc->sample_rate * sizeof(float));
 	osc->cos_wave = malloc(osc->sample_rate * sizeof(float));
 
@@ -78,7 +82,7 @@ void osc_init(struct osc_t *osc, uint32_t sample_rate, float freq) {
 
 	/* create waveform data and load into lookup tables */
 	create_wave(osc->sample_rate, freq,
-		osc->sin_wave, osc->cos_wave,
+		osc->sin_wave, osc->cos_wave, osc->sin_wave_out_of_phase
 		&osc->max);
 }
 
@@ -90,6 +94,10 @@ void osc_init(struct osc_t *osc, uint32_t sample_rate, float freq) {
  */
 float osc_get_cos(struct osc_t *osc) {
 	return osc->cos_wave[osc->cur];
+}
+
+float osc_get_sin_oup(struct osc_t *osc) {
+	return osc->sin_wave_out_of_phase[osc->cur];
 }
 
 float osc_get_sin(struct osc_t *osc) {
@@ -109,6 +117,7 @@ void osc_update_pos(struct osc_t *osc) {
  *
  */
 void osc_exit(struct osc_t *osc) {
+	free(osc->sin_wave_out_of_phase);
 	free(osc->sin_wave);
 	free(osc->cos_wave);
 	osc->cur = 0;
