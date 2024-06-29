@@ -83,8 +83,10 @@ typedef struct rds_params_t {
 	/* Long PS */
 	unsigned char lps[LPS_LENGTH];
 
+	#ifdef ODA_ERT
 	/* eRT */
 	unsigned char ert[ERT_LENGTH];
+	#endif
 
 	#ifdef RDS2
 	/* RDS2 image path*/

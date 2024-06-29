@@ -173,6 +173,7 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
 	}
 
 	if(rt_text[0] == '\r') {
+		/* RT strings lesser than 64 in size should have been ended with a \r if a return is on [0] then that means that our string is empty and thus we can not generate this group*/
 		return 0;
 	}
 
@@ -258,6 +259,7 @@ static void get_rds_ptyn_group(uint16_t *blocks) {
 
 	if (ptyn_state == 0 && rds_state.ptyn_update) {
 		memcpy(ptyn_text, rds_data.ptyn, PTYN_LENGTH);
+		rds_state.ptyn_ab ^= 1;
 		rds_state.ptyn_update = 0;
 	}
 
@@ -292,11 +294,12 @@ static void get_rds_lps_group(uint16_t *blocks) {
 	if (lps_state == rds_state.lps_segments) lps_state = 0;
 }
 
+/* 1A: i fucking added this 2 days ago and yesterday it was oficially implemented, i did tell anthony a idea 😭💀*/
 static void get_rds_ecc_group(uint16_t *blocks) {
 	blocks[1] |= 1 << 12;
 	blocks[2] = rds_data.ecc;
 	/*
-	PIN
+	PIN: i'd implement this but i have no reason to
 	blocks[3] = rds_data.pin_day << 11
 	blocks[3] |= rds_data.pin_hour << 6
 	blocks[3] |= rds_data.pin_minute
@@ -405,9 +408,8 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 
 	/* Type 1A groups */
 	if (rds_data.ecc) {
-		if (++group_counter[GROUP_1A] >= 17) {
+		if (++group_counter[GROUP_1A] >= 19) {
 			group_counter[GROUP_1A] = 0;
-			/* Do not generate a 10A group if PTYN is off */
 			get_rds_ecc_group(blocks);
 			return 1;
 		}
@@ -435,7 +437,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	}
 
 	/* RT+ groups */
-	#ifdef ODA
+	#ifdef ODA_RTP
 	if (++group_counter[rtplus_cfg.group] >= 30) {
 		group_counter[rtplus_cfg.group] = 0;
 		get_rds_rtplus_group(blocks);
@@ -476,14 +478,16 @@ static uint8_t get_rds_long_text_groups(uint16_t *blocks) {
 	switch (group_selector) {
 	case 0:
 	case 1:
+	#ifdef ODA_ERT
 	case 2: /* eRT */
-		#ifdef ODA_ERT
 		if (rds_data.ert[0]) {
 			get_rds_ert_group(blocks);
 			goto group_coded;
 		}
-		#endif
 		break;
+	#else
+	case 2: /* will this just replace everything with lps?*/
+	#endif
 	case 3: /* Long PS */
 		if (rds_data.lps[0]) {
 			get_rds_lps_group(blocks);
@@ -531,14 +535,15 @@ static void get_rds_group(uint16_t *blocks) {
 		goto group_coded;
 	}
 
-	/* Standard group sequence */
+	/* Standard group sequence
+	This group sequence is way better than the offcial one, official goes like: 0A 2A which is shitty here it is 0A 0A 0A 0A 2A 2A 2A 2A (2A) so we're in sequence and for example immiedietly get PS and quite fast get RT */
 	if(state < 4) {
 		/* 0A */
 		get_rds_ps_group(blocks);
 		state++;
 	} else if(state < 9) {
 		/* 2A */
-		if(!get_rds_rt_group(blocks)) {
+		if(!get_rds_rt_group(blocks)) { /* try to generate 2A if can't generate 2A than that means our text is empty so we generate PS instead of wasting groups on nothing*/
 			get_rds_ps_group(blocks);
 		}
 		state++;
@@ -616,7 +621,7 @@ void set_rds_pi(uint16_t pi_code) {
 }
 
 void set_rds_ecc(uint8_t ecc) {
-	rds_data.ecc = ecc & INT8_ALL;
+	rds_data.ecc = ecc;
 }
 
 void set_rds_rt(unsigned char *rt) {
@@ -793,7 +798,6 @@ void set_rds_ms(uint8_t ms) {
 void set_rds_di(uint8_t di) {
 	rds_data.di = di & INT8_L4;
 }
-
 
 void set_rds_ct(uint8_t ct) {
 	rds_data.tx_ctime = ct & INT8_0;

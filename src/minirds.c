@@ -103,10 +103,12 @@ static void show_help(char *name) {
 		"    -A,--af           Alternative Frequency (FM/LF/MF)\n"
 		"                        (more than one AF may be passed)\n"
 		"    -P,--ptyn         Program Type Name\n"
-		"    -C,--ctl          FIFO control pipe\n"
 		"    -l,--lps          Long PS\n"
+		"    -e,--ecc          ECC code\n"
+		"    -d,--di           DI code\n"
+		"    -C,--ctl          FIFO control pipe\n"
 		#ifdef RDS2
-		"    -I,--img          RDS2 Logo\n"
+		"    -I,--img          RDS2 Logo path\n"
 		#endif
 		"    -h,--help         Show this help text and exit\n"
 		"    -v,--version      Show version and exit\n"
@@ -170,7 +172,7 @@ int main(int argc, char **argv) {
 	pthread_mutex_t net_ctl_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t net_ctl_cond;
 
-	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:e:C:"
+	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:e:d:C:"
 	#ifdef RDS2
 	"I:"
 	#endif
@@ -190,6 +192,7 @@ int main(int argc, char **argv) {
 		{"ptyn",	required_argument, NULL, 'P'},
 		{"lps",    	required_argument, NULL, 'l'},
 		{"ecc",    	required_argument, NULL, 'e'},
+		{"di",    	required_argument, NULL, 'd'},
 		{"ctl",		required_argument, NULL, 'C'},
 		#ifdef RDS2
 		{"img",		required_argument, NULL, 'I'},
@@ -303,7 +306,7 @@ done_parsing_opts:
 
 	/* AO format */
 	memset(&format, 0, sizeof(struct ao_sample_format));
-	format.channels = 2;
+	format.channels = 2; /* can't we go mono? why waste resources on 2 identical channels */
 	format.bits = 16;
 	format.rate = OUTPUT_SAMPLE_RATE;
 	format.byte_format = AO_FMT_LITTLE;

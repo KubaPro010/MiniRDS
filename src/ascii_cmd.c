@@ -135,6 +135,9 @@ void process_ascii_cmd(unsigned char *str) {
 			unsigned long num = strtoul((char *)arg, NULL, 16);
 			if (num >= 0xE0 && num <= 0xE4)
 				set_rds_ecc(num);
+			else if(num == 0)
+				/* we wouldn't be able to disable it*/
+				set_rds_ecc(0);
 			return;
 		}
 		#ifdef ODA_RTP

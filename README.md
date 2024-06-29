@@ -1,12 +1,8 @@
 # MiniRDS
 
-### This is the world's first open-source RDS2 encoder!
-
 This program is designed for generating a realtime RDS signal. It is capable of RDS2 using up to 3 additional subcarriers.
 
 This is based on the RDS encoder from [Mpxgen](https://github.com/Anthony96922/mpxgen), which is currently not maintained.
-
-![MiniRDS on Eton/Tecsun](doc/mpxgen.jpg)
 
 #### Features
 - Low resource requirements
@@ -103,4 +99,5 @@ public domain](http://downloads.dxing.si/download.php?file=ISO%20Stamdards/RDS/l
 Technical Manual](https://pira.cz/rds/p232man.pdf)
 
 ## Credits
+Note that this is a fork of [Anthony96922](https://github.com/Anthony96922)'s [MiniRDS](https://github.com/Anthony96922/MiniRDS)
 The RDS waveform generator was adapted from [PiFmRds](https://github.com/ChristopheJacquet/PiFmRds)
