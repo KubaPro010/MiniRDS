@@ -518,7 +518,7 @@ static void get_rds_group(uint16_t *blocks) {
 	/* Generate block content */
 
 	/* CT (clock time) has priority over other group types */
-	if (rds_data.tx_ctime && get_rds_ct_group(blocks)) {
+	if (rds_data.ct && get_rds_ct_group(blocks)) {
 		goto group_coded;
 	}
 
@@ -799,5 +799,5 @@ void set_rds_di(uint8_t di) {
 }
 
 void set_rds_ct(uint8_t ct) {
-	rds_data.tx_ctime = ct & INT8_0;
+	rds_data.ct = ct & INT8_0;
 }

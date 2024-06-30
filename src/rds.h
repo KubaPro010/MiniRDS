@@ -77,8 +77,8 @@ typedef struct rds_params_t {
 	/* AF */
 	struct rds_af_t af;
 
-	/* ct */
-	uint8_t tx_ctime;
+	/* CT */
+	uint8_t ct;
 
 	/* Long PS */
 	unsigned char lps[LPS_LENGTH];

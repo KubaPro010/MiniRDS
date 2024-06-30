@@ -26,7 +26,9 @@
 #include "fm_mpx.h"
 #include "control_pipe.h"
 #include "resampler.h"
+#ifdef NETCTL
 #include "net.h"
+#endif
 #include "lib.h"
 #include "ascii_cmd.h"
 
@@ -71,6 +73,7 @@ static void *control_pipe_worker() {
 	pthread_exit(NULL);
 }
 
+#ifdef NETCTL
 static void *net_ctl_worker() {
 	while (!stop_rds) {
 		poll_ctl_socket();
@@ -80,6 +83,7 @@ static void *net_ctl_worker() {
 	close_ctl_socket();
 	pthread_exit(NULL);
 }
+#endif
 
 static void show_help(char *name) {
 	printf(
@@ -107,6 +111,10 @@ static void show_help(char *name) {
 		"    -e,--ecc          ECC code\n"
 		"    -d,--di           DI code\n"
 		"    -C,--ctl          FIFO control pipe\n"
+		#ifdef NETCTL
+		"    -n,--netport      Network port for CTL\n"
+		"    -N,--netproto     Protocol for network CTL, set to 1 for TCP, 0 for UDP\n"
+		#endif
 		#ifdef RDS2
 		"    -I,--img          RDS2 Logo path\n"
 		#endif
@@ -147,8 +155,10 @@ int main(int argc, char **argv) {
 	float *out_buffer;
 	char *dev_out;
 
+	#ifdef NETCTL
 	uint16_t port = 0;
 	uint8_t proto = 1;
+	#endif
 
 	int8_t r;
 	size_t frames;
@@ -167,12 +177,17 @@ int main(int argc, char **argv) {
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
 
+	#ifdef NETCTL
 	/* network control socket */
 	pthread_t net_ctl_thread;
 	pthread_mutex_t net_ctl_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t net_ctl_cond;
+	#endif
 
 	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:e:d:C:"
+	#ifdef NETCTL
+	"n:N:"
+	#endif
 	#ifdef RDS2
 	"I:"
 	#endif
@@ -194,6 +209,10 @@ int main(int argc, char **argv) {
 		{"ecc",    	required_argument, NULL, 'e'},
 		{"di",    	required_argument, NULL, 'd'},
 		{"ctl",		required_argument, NULL, 'C'},
+		#ifdef NETCTL
+		{"netport",		required_argument, NULL, 'n'},
+		{"netproto",	required_argument, NULL, 'N'},
+		#endif
 		#ifdef RDS2
 		{"img",		required_argument, NULL, 'I'},
 		#endif
@@ -266,6 +285,16 @@ keep_parsing_opts:
 			break;
 		#endif
 
+		#ifdef NETCTL
+		case 'n': /* port */
+			port = strtoul(optarg, NULL, 10);
+			break;
+
+		case 'N': /* proto */
+			proto = strtoul(optarg, NULL, 10);
+			break;
+		#endif
+
 		case 'v': /* version */
 			show_version();
 			return 0;
@@ -284,8 +313,10 @@ done_parsing_opts:
 	/* Initialize pthread stuff */
 	pthread_mutex_init(&control_pipe_mutex, NULL);
 	pthread_cond_init(&control_pipe_cond, NULL);
+	#ifdef NETCTL
 	pthread_mutex_init(&net_ctl_mutex, NULL);
 	pthread_cond_init(&net_ctl_cond, NULL);
+	#endif
 	pthread_attr_init(&attr);
 
 	/* Setup buffers */
@@ -354,6 +385,7 @@ done_parsing_opts:
 		}
 	}
 
+	#ifdef NETCTL
 	/* ASCII control over network socket */
 	if (port) {
 		if (open_ctl_socket(port, proto) == 0) {
@@ -369,6 +401,7 @@ done_parsing_opts:
 			fprintf(stderr, "Failed to open port %d.\n", port);
 		}
 	}
+	#endif
 
 	for (;;) {
 		fm_rds_get_frames(mpx_buffer, NUM_MPX_FRAMES_IN);
@@ -399,11 +432,13 @@ exit:
 		pthread_join(control_pipe_thread, NULL);
 	}
 
+	#ifdef NETCTL
 	if (port) {
 		fprintf(stderr, "Waiting for net socket thread to shut down.\n");
 		pthread_cond_signal(&net_ctl_cond);
 		pthread_join(net_ctl_thread, NULL);
 	}
+	#endif
 
 	pthread_attr_destroy(&attr);
 

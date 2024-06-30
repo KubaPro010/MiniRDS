@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.10)
 project(minirds VERSION 1.0)
 
 # Define options
+option(NETWORK_CTL "Enable Network CTL" OFF)
+
 option(ODA_ERT "Enable ODA (eRT)" OFF)
 option(ODA_RTP "Enable ODA (RT+)" OFF)
 option(ODA_ERTP "Enable ODA (eRT+)" OFF)
@@ -27,6 +29,10 @@ set(SOURCES
     waveforms.c
     rds.c
 )
+
+if(NETWORK_CTL)
+    add_definitions(-DNETCTL)
+endif()
 
 # Handle RDS2 options
 if(RDS2)

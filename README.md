@@ -23,7 +23,7 @@ This is based on the RDS encoder from [Mpxgen](https://github.com/Anthony96922/m
 - better arguments
 - Option to disable ODA (to not get that ODA AID thing)
 - Better Group Sequence (original had 0A 2A but here it is 0A 0A 0A 0A 2A 2A 2A 2A (2A) so PS appear instantly and RT is fast)
-
+- Options for Networked CTL
 
 ## Build
 For Debian-like distros: `sudo apt-get install libao-dev libsamplerate0-dev` to install deps.
@@ -44,7 +44,7 @@ sudo make install
 ## How to use
 Simply run:
 ```
-./minirds
+minirds
 ```
 to confirm proper operation.
 
@@ -89,6 +89,8 @@ dev=mpxmix
 Then set the Stereo Tool MPX output to use the ALSA "mpxmix" output. Finally run minirds. *Adjust volumes accordingly.*
 
 Note that this setup is not optimal. Hans plans to add RDS2 passthough to the ST external RDS input. [Stereo Tool forum post](https://forums.stereotool.com/viewtopic.php?f=14&t=33793&start=150)
+
+If you need to you also can run MiniRDS on a ST transmitter modulated as mono audio, which does work however on some TXs the RDS signal may not be great due to harmonics of ST Pilot Tone
 
 ### Changing PS, RT, TA and PTY at run-time
 You can control PS, RT, TA (Traffic Announcement flag), PTY (Program Type) and many other items at run-time using a named pipe (FIFO). For this run MiniRDS with the `--ctl` argument.

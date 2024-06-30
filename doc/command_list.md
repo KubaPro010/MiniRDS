@@ -1,11 +1,11 @@
 ## Mpxgen command list
 
-This is a complete list of commands Mpxgen recognizes. The API is not yet stable.
+This is a complete list of commands MiniRDS recognizes.
 
 Create the control pipe and enable FIFO control:
 ```
 mkfifo rds_ctl
-./mpxgen --ctl rds_ctl
+minirds --ctl rds_ctl
 ```
 Then you can send “commands” to change PS, RT, TA and PTY:
 ```
@@ -28,12 +28,12 @@ Sets the PI code. This takes 4 hexadecimal digits.
 `PI 1000`
 
 #### `PS`
-The Program Service text. Maximum is 8 characters. This is usually static, such as the station's callsign, but can be dynamically updated.
+The Program Service text. Maximum is 8 characters. This is usually static, such as the station's callsign, but can be dynamically updated (dynamic updates arent allowed by the standart).
 
 `PS Hello`
 
 #### `RT`
-The Radiotext to be displayed. This can be up to 64 characters.
+The Radiotext to be displayed. This can be up to 64 characters. You can also use "RTA" or "RTB" to force AB
 
 `RT This is a Radiotext message`
 
@@ -51,11 +51,6 @@ To signal to receivers that the broadcast can carry traffic info.
 The Music/Speech flag. Music is 1 and speech is 0.
 
 `MS 1`
-
-#### `AB`
-The Radiotext A/B flag. This should not be used, as updates to RT automatically toggle this flag.
-
-`AB A`
 
 #### `DI`
 Decoder Identification. A 4-bit decimal number. Usually only the "stereo" flag (1) is set.

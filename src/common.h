@@ -25,7 +25,7 @@
 #include <math.h>
 #include <stdbool.h>
 /* needed for clock time */
-#include <time.h>
+#include <time.h> /* woudn't it be better to move this to rds.h ?*/
 
 /* workaround for missing pi definition */
 #ifndef M_PI

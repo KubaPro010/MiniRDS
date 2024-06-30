@@ -80,7 +80,6 @@ uint8_t get_pty_code(char *pty_str) {
 }
 
 #ifdef ODA_RTP
-/* wanna ask where is this used */
 static char *rtp_content_types[64] = {
 	/* dummy */
 	"DUMMY_CLASS",
@@ -181,6 +180,7 @@ static uint16_t offset_words[] = {
 };
 
 /* CRC-16 ITU-T/CCITT checkword calculation */
+/* wanna ask where is this used */
 uint16_t crc16(uint8_t *data, size_t len) {
 	uint16_t crc = 0xffff;
 
