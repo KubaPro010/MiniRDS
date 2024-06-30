@@ -32,7 +32,8 @@ set(SOURCES
 
 if(NETWORK_CTL)
     add_definitions(-DNETCTL)
-endif()
+    set(SOURCES ${SOURCES} net.c)
+    endif()
 
 # Handle RDS2 options
 if(RDS2)
@@ -73,7 +74,6 @@ set(SOURCES
     resampler.c
     modulator.c
     lib.c
-    net.c
     ascii_cmd.c
 )
 
