@@ -56,18 +56,6 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_rt(xlat(arg));
 			return;
 		}
-		if (CMD_MATCHES("RTA")) {
-			arg[RT_LENGTH * 2] = 0;
-			set_rds_rt_ab(1); /* get instantly changed to 0, A*/
-			set_rds_rt(xlat(arg));
-			return;
-		}
-		if (CMD_MATCHES("RTB")) {
-			arg[RT_LENGTH * 2] = 0;
-			set_rds_rt_ab(0); /* get instantly changed to 1, B*/
-			set_rds_rt(xlat(arg));
-			return;
-		}
 		if (CMD_MATCHES("CT"))
 		{
 			set_rds_ct(arg[0]);
@@ -133,6 +121,18 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[3] = 0;
 		arg = str + 4;
 
+		if (CMD_MATCHES("RTA")) {
+			arg[RT_LENGTH * 2] = 0;
+			set_rds_rt_ab(1); /* get instantly changed to 0, A*/
+			set_rds_rt(xlat(arg));
+			return;
+		}
+		if (CMD_MATCHES("RTB")) {
+			arg[RT_LENGTH * 2] = 0;
+			set_rds_rt_ab(0); /* get instantly changed to 1, B*/
+			set_rds_rt(xlat(arg));
+			return;
+		}
 		if (CMD_MATCHES("PTY")) {
 			if (arg[0] >= 'A') { /* PTY ID was passed */
 				set_rds_pty(get_pty_code((char *)arg));
