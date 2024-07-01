@@ -286,7 +286,7 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 	}
-	#ifdef CCG
+	#ifdef CGG
 	if (cmd_len > 2 && str[1] == '=') {
 		cmd = str;
 		cmd[1] = 0;
