@@ -298,9 +298,9 @@ void process_ascii_cmd(unsigned char *str) {
 		arg = str + 2;
 		if (CMD_MATCHES("G")) {
 			uint16_t blocks[4];
-			if(arg[15] == 0){
+			if(arg[16] == 0){
 				/* RDS2 Group*/
-			} else if(arg[11] == 0) {
+			} else if(arg[12] == 0) {
 				/* RDS1 Group*/
 				blocks[0] = get_rds_pi();
 				int count = sscanf((char *)arg, "%4hx%4hx%4hx", &blocks[1], &blocks[2], &blocks[3]);
