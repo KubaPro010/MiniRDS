@@ -6,9 +6,7 @@ project(minirds VERSION 1.0)
 # Define options
 option(CUSTOM_GROUPS "Custom groups or free form groups, pass in something like 'CG FFFF FFFF FFFF FFFF'" OFF)
 
-option(ODA_ERT "Enable ODA (eRT)" OFF)
 option(ODA_RTP "Enable ODA (RT+)" OFF)
-option(ODA_ERTP "Enable ODA (eRT+)" OFF)
 
 option(RDS2 "Enable RDS2 capabilities" OFF)
 option(RDS2_QUADRATURE_CARRIER "Shift RDS2 stream carriers by 90, 180, and 270 degrees" ON)
@@ -50,17 +48,7 @@ if(RDS2_DEBUG)
     add_definitions(-DRDS2_DEBUG)
 endif()
 
-if(ODA_ERT)
-    add_definitions(-DODA)
-    add_definitions(-DODA_ERT)
-endif()
-
 if(ODA_RTP)
-    add_definitions(-DODA)
-    add_definitions(-DODA_RTP)
-endif()
-
-if(ODA_ERTP)
     add_definitions(-DODA)
     add_definitions(-DODA_RTP)
 endif()

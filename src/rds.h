@@ -40,7 +40,6 @@
 #define PS_LENGTH	8
 #define PTYN_LENGTH	8
 #define LPS_LENGTH	32
-#define ERT_LENGTH	128
 
 /* AF list size
  *
@@ -82,11 +81,6 @@ typedef struct rds_params_t {
 
 	/* Long PS */
 	unsigned char lps[LPS_LENGTH];
-
-	#ifdef ODA_ERT
-	/* eRT */
-	unsigned char ert[ERT_LENGTH];
-	#endif
 
 	#ifdef RDS2
 	/* RDS2 image path*/
@@ -283,8 +277,6 @@ typedef struct rds_oda_t {
  * Extensive list: https://www.nrscstandards.org/committees/dsm/archive/rds-oda-aids.pdf
  */
 #define	ODA_AID_RTPLUS	0x4bd7
-#define ODA_AID_ERT	0x6552
-#define ODA_AID_ERTPLUS	0x4bd8
 #define ODA_9BIT_AF	0x6365
 /* RDS2 */
 #define ODA_AID_RFT	0xff7f
@@ -299,20 +291,15 @@ extern void set_rds_rt_ab(uint8_t ab);
 extern void set_rds_rt(unsigned char *rt);
 extern void set_rds_ps(unsigned char *ps);
 extern void set_rds_lps(unsigned char *lps);
-#ifdef ODA_ERT
-extern void set_rds_ert(unsigned char *ert);
-#endif
 #ifdef ODA_RTP
-extern void set_rds_rtplus_flags(uint8_t flags);
+extern void set_rds_rtplus_running(uint8_t flags);
+extern void set_rds_rtplus_enabled(uint8_t enabled);
 extern void set_rds_rtplus_tags(uint8_t *tags);
-#endif
-#ifdef ODA_ERTP
-extern void set_rds_ertplus_flags(uint8_t flags);
-extern void set_rds_ertplus_tags(uint8_t *tags);
 #endif
 extern void set_rds_ta(uint8_t ta);
 extern void set_rds_pty(uint8_t pty);
 extern void set_rds_ptyn(unsigned char *ptyn);
+extern void set_rds_ptyn_enabled(uint8_t ptyn_enabled);
 extern void set_rds_af(struct rds_af_t new_af_list);
 extern void clear_rds_af();
 extern void set_rds_tp(uint8_t tp);

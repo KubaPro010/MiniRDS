@@ -3,3 +3,9 @@ Current TODO for RDS encoding:
 - X-Command (may not be implemented)
 - Dynamic PS (may not be implemented)
 - RDS2 tunneling
+
+ASCII commands to implement:
+- AF
+- Group sequence
+- Short RT
+- Bidirectionality
