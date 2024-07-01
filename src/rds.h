@@ -277,7 +277,6 @@ typedef struct rds_oda_t {
  * Extensive list: https://www.nrscstandards.org/committees/dsm/archive/rds-oda-aids.pdf
  */
 #define	ODA_AID_RTPLUS	0x4bd7
-#define ODA_9BIT_AF	0x6365
 /* RDS2 */
 #define ODA_AID_RFT	0xff7f
 #define ODA_AID_RFTPLUS	0xff80

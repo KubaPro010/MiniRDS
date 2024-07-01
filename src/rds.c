@@ -176,16 +176,15 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
  */
 #ifdef ODA
 static int get_rds_oda_group(uint16_t *blocks) {
-	// #ifdef ODA_RTP
-	// if(this_oda.aid == ODA_AID_RTPLUS && rtplus_cfg.enabled == 0) {
-	// 	return 0;
-	// }
-	// #endif
-
-	blocks[1] |= 3 << 12;
-
 	/* select ODA */
 	struct rds_oda_t this_oda = odas[oda_state.current];
+	#ifdef ODA_RTP
+	if(this_oda.aid == ODA_AID_RTPLUS && rtplus_cfg.enabled == 0) {
+		return 0;
+	}
+	#endif
+
+	blocks[1] |= 3 << 12;
 
 	blocks[1] |= GET_GROUP_TYPE(this_oda.group) << 1;
 	blocks[1] |= GET_GROUP_VER(this_oda.group);

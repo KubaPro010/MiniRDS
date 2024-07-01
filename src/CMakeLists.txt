@@ -4,11 +4,11 @@ cmake_minimum_required(VERSION 3.10)
 project(minirds VERSION 1.0)
 
 # Define options
-option(CUSTOM_GROUPS "Custom groups or free form groups, pass in something like 'CG FFFF FFFF FFFF FFFF'" OFF)
+option(CUSTOM_GROUPS "Custom groups or free form groups, pass in something like 'CG FFFF FFFF FFFF FFFF'" ON)
 
-option(ODA_RTP "Enable ODA (RT+)" OFF)
+option(ODA_RTP "Enable ODA (RT+)" ON)
 
-option(RDS2 "Enable RDS2 capabilities" OFF)
+option(RDS2 "Enable RDS2 capabilities" ON)
 option(RDS2_QUADRATURE_CARRIER "Shift RDS2 stream carriers by 90, 180, and 270 degrees" ON)
 option(RDS2_SYMBOL_SHIFTING "Enable RDS2 symbol shifting" ON)
 option(RDS2_DEBUG "Enable RDS2 debugging" OFF)
