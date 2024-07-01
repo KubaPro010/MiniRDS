@@ -322,7 +322,7 @@ extern void set_rds_di(uint8_t di);
 extern float get_rds_sample(uint8_t stream_num);
 extern uint16_t get_rds_pi();
 #ifdef CGG
-extern void set_rds_cg(uint16_t* blocks)
+extern void set_rds_cg(uint16_t* blocks);
 #endif
 
 #endif /* RDS_H */
