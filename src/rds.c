@@ -828,7 +828,7 @@ void set_rds_ct(uint8_t ct) {
 	rds_data.ct = ct & INT8_0;
 }
 
-#ifdef CCG
+#ifdef CGG
 void set_rds_cg(uint16_t* blocks) {
 	rds_state.custom_group[0] = blocks[0];
 	rds_state.custom_group[1] = blocks[1];
