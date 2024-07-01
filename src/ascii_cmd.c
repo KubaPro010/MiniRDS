@@ -51,6 +51,23 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_ps(xlat(arg));
 			return;
 		}
+		if (CMD_MATCHES("DI")) {
+			arg[2] = 0;
+			set_rds_di(strtoul((char *)arg, NULL, 10));
+			return;
+		}
+		if (CMD_MATCHES("TP")) {
+			set_rds_tp(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("TA")) {
+			set_rds_ta(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("MS")) {
+			set_rds_ms(arg[0]);
+			return;
+		}
 		if (CMD_MATCHES("RT")) {
 			arg[RT_LENGTH * 2] = 0;
 			set_rds_rt(xlat(arg));
@@ -61,23 +78,20 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_ct(arg[0]);
 			return;
 		}
-		if (CMD_MATCHES("TA")) {
-			set_rds_ta(arg[0]);
+
+		#ifdef CGG
+		if (CMD_MATCHES("CG")) {
+			uint16_t blocks[4];
+			int count = sscanf((const char*)arg, "%hX %hX %hX %hX",
+							&blocks[0], &blocks[1],
+							&blocks[2], &blocks[3]);
+
+			if (count == 4) {
+				set_rds_cg(blocks);
+			}
 			return;
 		}
-		if (CMD_MATCHES("TP")) {
-			set_rds_tp(arg[0]);
-			return;
-		}
-		if (CMD_MATCHES("MS")) {
-			set_rds_ms(arg[0]);
-			return;
-		}
-		if (CMD_MATCHES("DI")) {
-			arg[2] = 0;
-			set_rds_di(strtoul((char *)arg, NULL, 10));
-			return;
-		}
+		#endif
 		if (CMD_MATCHES("AF")) {
 			/* TODO: work on existing AF list */
 			uint8_t arg_count;
@@ -148,7 +162,7 @@ void process_ascii_cmd(unsigned char *str) {
 			if (num >= 0xD0 && num <= 0xF4)
 				set_rds_ecc(num);
 			else if(num == 0)
-				/* we wouldn't be able to disable it*/
+				/* we wouldn't be able to disable it */
 				set_rds_ecc(0);
 			return;
 		}
@@ -213,6 +227,68 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 		#endif
 	}
+
+	if (cmd_len > 5 && str[4] == '=') {
+		/* compatibilty with existing (standarts)*/
+		if (CMD_MATCHES("TEXT")) {
+			arg[RT_LENGTH * 2] = 0;
+			set_rds_rt(xlat(arg));
+			return;
+		}
+	}
+	if (cmd_len > 4 && str[3] == '=') {
+		if (CMD_MATCHES("RT1")) {
+			arg[RT_LENGTH * 2] = 0;
+			set_rds_rt(xlat(arg));
+			return;
+		}
+		if (CMD_MATCHES("PTY")) {
+			arg[2] = 0;
+			set_rds_pty(strtoul((char *)arg, NULL, 10));
+			return;
+		}
+	}
+	if (cmd_len > 3 && str[2] == '=') {
+		if (CMD_MATCHES("CT")) {
+			set_rds_ct(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("DI")) {
+			arg[2] = 0;
+			set_rds_di(strtoul((char *)arg, NULL, 10));
+			return;
+		}
+		if (CMD_MATCHES("TP")) {
+			set_rds_tp(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("TA")) {
+			set_rds_ta(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("MS")) {
+			set_rds_ms(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("PI")) {
+			arg[4] = 0;
+			set_rds_pi(strtoul((char *)arg, NULL, 16));
+			return;
+		}
+	}
+	#ifdef CCG
+	if (cmd_len > 2 && str[1] == '=') {
+		if (CMD_MATCHES("G")) {
+			uint16_t blocks[4];
+			blocks[0] = get_rds_pi();
+		    int count = sscanf((char *)arg, "%4hx%4hx%4hx", &blocks[1], &blocks[2], &blocks[3]);
+			if(count == 3) {
+				set_rds_cg(blocks);
+			}
+			return;
+		}
+	}
+	#endif
 
 	if (cmd_len > 5 && str[4] == ' ') {
 		cmd = str;

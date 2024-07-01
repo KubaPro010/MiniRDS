@@ -44,6 +44,11 @@ static struct {
 	uint8_t ert_update;
 	uint8_t ert_segments;
 	#endif
+
+	#ifdef CGG
+	uint8_t custom_group_in;
+	uint16_t custom_group[GROUP_LENGTH];
+	#endif
 } rds_state;
 
 #ifdef ODA
@@ -502,6 +507,21 @@ group_coded:
 	return 1;
 }
 
+#ifdef CGG
+/* Get a custom group if there is one*/
+static uint8_t get_rds_custom_groups(uint16_t *blocks) {
+	if(rds_state.custom_group_in) {
+		rds_state.custom_group_in = 0;
+		blocks[0] = rds_state.custom_group[0];
+		blocks[1] = rds_state.custom_group[1];
+		blocks[2] = rds_state.custom_group[2];
+		blocks[3] = rds_state.custom_group[3];
+		return 1;
+	}
+	return 0;
+}
+#endif
+
 /* Creates an RDS group.
  * This generates sequences of the form 0A, 2A, 0A, 2A, 0A, 2A, etc.
  */
@@ -521,6 +541,12 @@ static void get_rds_group(uint16_t *blocks) {
 	if (rds_data.ct && get_rds_ct_group(blocks)) {
 		goto group_coded;
 	}
+
+#ifdef CGG
+	if(get_rds_custom_groups(blocks)) {
+		goto group_coded;
+	}
+#endif
 
 	/* Longer text groups get medium priority */
 	if (get_rds_long_text_groups(blocks)) {
@@ -723,10 +749,10 @@ void set_rds_lps(unsigned char *lps) {
 	}
 }
 
-#ifdef ODA_RTP
+#ifdef RTP
 void set_rds_rtplus_flags(uint8_t flags) {
 	rtplus_cfg.running	= (flags & INT8_1) >> 1;
-	rtplus_cfg.toggle	= flags & INT8_0;
+	rtplus_cfg.toggle	= rds_state.rt_ab;
 }
 
 void set_rds_rtplus_tags(uint8_t *tags) {
@@ -800,4 +826,18 @@ void set_rds_di(uint8_t di) {
 
 void set_rds_ct(uint8_t ct) {
 	rds_data.ct = ct & INT8_0;
+}
+
+#ifdef CCG
+void set_rds_cg(uint16_t* blocks) {
+	rds_state.custom_group[0] = blocks[0];
+	rds_state.custom_group[1] = blocks[1];
+	rds_state.custom_group[2] = blocks[2];
+	rds_state.custom_group[3] = blocks[3];
+	rds_state.custom_group_in = 1;
+}
+#endif
+
+uint16_t get_rds_pi() {
+	return rds_data.pi;
 }
