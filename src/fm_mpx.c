@@ -48,7 +48,7 @@ void set_output_volume(float vol) {
 }
 
 void set_rdsgen(uint8_t gen) {
-	if (gen > 2) vol = 2;
+	if (gen > 2) gen = 2;
 	rdsgen = gen;
 }
 
