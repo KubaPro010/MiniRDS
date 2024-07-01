@@ -179,7 +179,7 @@ static int get_rds_oda_group(uint16_t *blocks) {
 	/* select ODA */
 	struct rds_oda_t this_oda = odas[oda_state.current];
 	#ifdef ODA_RTP
-	if(this_oda.aid == ODA_AID_RTPLUS && rtplus_cfg.enabled != 1) {
+	if(this_oda.aid == ODA_AID_RTPLUS && rtplus_cfg.enabled == 0) {
 		return 0;
 	}
 	#endif
