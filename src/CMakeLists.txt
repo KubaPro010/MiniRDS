@@ -5,7 +5,6 @@ project(minirds VERSION 1.0)
 
 # Define options
 option(CUSTOM_GROUPS "Custom groups or free form groups, pass in something like 'CG FFFF FFFF FFFF FFFF'" OFF)
-option(NETWORK_CTL "Enable Network CTL" OFF)
 
 option(ODA_ERT "Enable ODA (eRT)" OFF)
 option(ODA_RTP "Enable ODA (RT+)" OFF)
@@ -33,11 +32,6 @@ set(SOURCES
 
 if(CUSTOM_GROUPS)
     add_definitions(-DCGG)
-endif()
-
-if(NETWORK_CTL)
-    add_definitions(-DNETCTL)
-    set(SOURCES ${SOURCES} net.c)
 endif()
 
 # Handle RDS2 options
