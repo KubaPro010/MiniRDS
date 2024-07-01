@@ -299,11 +299,17 @@ extern void set_rds_rt_ab(uint8_t ab);
 extern void set_rds_rt(unsigned char *rt);
 extern void set_rds_ps(unsigned char *ps);
 extern void set_rds_lps(unsigned char *lps);
+#ifdef ODA_ERT
 extern void set_rds_ert(unsigned char *ert);
+#endif
+#ifdef ODA_RTP
 extern void set_rds_rtplus_flags(uint8_t flags);
 extern void set_rds_rtplus_tags(uint8_t *tags);
+#endif
+#ifdef ODA_ERTP
 extern void set_rds_ertplus_flags(uint8_t flags);
 extern void set_rds_ertplus_tags(uint8_t *tags);
+#endif
 extern void set_rds_ta(uint8_t ta);
 extern void set_rds_pty(uint8_t pty);
 extern void set_rds_ptyn(unsigned char *ptyn);
@@ -314,7 +320,9 @@ extern void set_rds_ms(uint8_t ms);
 extern void set_rds_ct(uint8_t ct);
 extern void set_rds_di(uint8_t di);
 extern float get_rds_sample(uint8_t stream_num);
+#ifdef CCG
 extern void set_rds_cg(uint16_t* blocks)
+#endif
 extern uint16_t get_rds_pi();
 
 #endif /* RDS_H */

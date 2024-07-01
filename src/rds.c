@@ -749,7 +749,7 @@ void set_rds_lps(unsigned char *lps) {
 	}
 }
 
-#ifdef RTP
+#ifdef ODA_RTP
 void set_rds_rtplus_flags(uint8_t flags) {
 	rtplus_cfg.running	= (flags & INT8_1) >> 1;
 	rtplus_cfg.toggle	= rds_state.rt_ab;
