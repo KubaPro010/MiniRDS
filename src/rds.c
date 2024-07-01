@@ -32,8 +32,6 @@ static struct {
 	uint8_t rt_update;
 	uint8_t rt_ab;
 	uint8_t rt_segments;
-
-	uint8_t ptyn_enabled;
 	uint8_t ptyn_update;
 	uint8_t ptyn_ab;
 
@@ -59,7 +57,6 @@ static struct {
 #ifdef ODA_RTP
 /* RT+ */
 static struct {
-	uint8_t enabled;
 	uint8_t group;
 	uint8_t running;
 	uint8_t toggle;
@@ -175,16 +172,11 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
 /* ODA group (3A)
  */
 #ifdef ODA
-static int get_rds_oda_group(uint16_t *blocks) {
+static void get_rds_oda_group(uint16_t *blocks) {
+	blocks[1] |= 3 << 12;
+
 	/* select ODA */
 	struct rds_oda_t this_oda = odas[oda_state.current];
-	#ifdef ODA_RTP
-	if(this_oda.aid == ODA_AID_RTPLUS && rtplus_cfg.enabled == 0) {
-		return 0;
-	}
-	#endif
-
-	blocks[1] |= 3 << 12;
 
 	blocks[1] |= GET_GROUP_TYPE(this_oda.group) << 1;
 	blocks[1] |= GET_GROUP_VER(this_oda.group);
@@ -193,7 +185,6 @@ static int get_rds_oda_group(uint16_t *blocks) {
 
 	oda_state.current++;
 	if (oda_state.current == oda_state.count) oda_state.current = 0;
-	return 1;
 }
 #endif
 
@@ -299,8 +290,6 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 static void init_rtplus(uint8_t group) {
 	register_oda(group, ODA_AID_RTPLUS, 0);
 	rtplus_cfg.group = group;
-	rtplus_cfg.toggle = 1;
-	rtplus_cfg.enabled = 1;
 }
 #endif
 
@@ -343,16 +332,14 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	if (oda_state.count) {
 		if (++group_counter[GROUP_3A] >= 25) {
 			group_counter[GROUP_3A] = 0;
-			if(get_rds_oda_group(blocks)) {
-				return 0;
-			}
+			get_rds_oda_group(blocks);
 			return 1;
 		}
 	}
 	#endif
 
 	/* Type 10A groups */
-	if (rds_data.ptyn[0] && rds_state.ptyn_enabled) {
+	if (rds_data.ptyn[0]) {
 		if (++group_counter[GROUP_10A] >= 13) {
 			group_counter[GROUP_10A] = 0;
 			/* Do not generate a 10A group if PTYN is off */
@@ -392,7 +379,7 @@ static uint8_t get_rds_long_text_groups(uint16_t *blocks) {
 	switch (group_selector) {
 	case 0:
 	case 1:
-	case 2:
+	case 2: /* will this just replace everything with lps?*/
 	case 3: /* Long PS */
 		if (rds_data.lps[0]) {
 			get_rds_lps_group(blocks);
@@ -507,8 +494,6 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_rt(rds_params.rt);
 	set_rds_pty(rds_params.pty);
 	set_rds_ptyn(rds_params.ptyn);
-	rds_state.ptyn_enabled = 1;
-	rds_state.ptyn_ab = 1;
 	set_rds_tp(rds_params.tp);
 	set_rds_ecc(rds_params.ecc);
 	set_rds_ct(1);
@@ -613,12 +598,8 @@ void set_rds_lps(unsigned char *lps) {
 }
 
 #ifdef ODA_RTP
-void set_rds_rtplus_running(uint8_t flags) {
+void set_rds_rtplus_flags(uint8_t flags) {
 	rtplus_cfg.running	= (flags & INT8_1) >> 1;
-}
-
-void set_rds_rtplus_enabled(uint8_t enabled) {
-	rtplus_cfg.enabled	= enabled;
 }
 
 void set_rds_rtplus_tags(uint8_t *tags) {
@@ -657,10 +638,6 @@ void set_rds_ptyn(unsigned char *ptyn) {
 	memset(rds_data.ptyn, ' ', PTYN_LENGTH);
 	while (*ptyn != 0 && len < PTYN_LENGTH)
 		rds_data.ptyn[len++] = *ptyn++;
-}
-
-void set_rds_ptyn_enabled(uint8_t ptyn_enabled) {
-	rds_state.ptyn_enabled = ptyn_enabled & INT8_0;
 }
 
 void set_rds_ta(uint8_t ta) {

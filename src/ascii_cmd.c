@@ -41,14 +41,41 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[2] = 0;
 		arg = str + 3;
 
+		if (CMD_MATCHES("PI")) {
+			arg[4] = 0;
+			set_rds_pi(strtoul((char *)arg, NULL, 16));
+			return;
+		}
 		if (CMD_MATCHES("PS")) {
 			arg[PS_LENGTH * 2] = 0;
 			set_rds_ps(xlat(arg));
 			return;
 		}
+		if (CMD_MATCHES("DI")) {
+			arg[2] = 0;
+			set_rds_di(strtoul((char *)arg, NULL, 10));
+			return;
+		}
+		if (CMD_MATCHES("TP")) {
+			set_rds_tp(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("TA")) {
+			set_rds_ta(arg[0]);
+			return;
+		}
+		if (CMD_MATCHES("MS")) {
+			set_rds_ms(arg[0]);
+			return;
+		}
 		if (CMD_MATCHES("RT")) {
 			arg[RT_LENGTH * 2] = 0;
 			set_rds_rt(xlat(arg));
+			return;
+		}
+		if (CMD_MATCHES("CT"))
+		{
+			set_rds_ct(arg[0]);
 			return;
 		}
 
@@ -108,6 +135,55 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[3] = 0;
 		arg = str + 4;
 
+		if (CMD_MATCHES("RTA")) {
+			arg[RT_LENGTH * 2] = 0;
+			set_rds_rt_ab(1); /* get instantly changed to 0, A*/
+			set_rds_rt(xlat(arg));
+			return;
+		}
+		if (CMD_MATCHES("RTB")) {
+			arg[RT_LENGTH * 2] = 0;
+			set_rds_rt_ab(0); /* get instantly changed to 1, B*/
+			set_rds_rt(xlat(arg));
+			return;
+		}
+		if (CMD_MATCHES("PTY")) {
+			if (arg[0] >= 'A') { /* PTY ID was passed */
+				set_rds_pty(get_pty_code((char *)arg));
+			} else {
+				arg[2] = 0;
+				set_rds_pty(strtoul((char *)arg, NULL, 10));
+			}
+			return;
+		}
+		if (CMD_MATCHES("ECC")) {
+			arg[2] = 0;
+			unsigned long num = strtoul((char *)arg, NULL, 16);
+			if (num >= 0xD0 && num <= 0xF4)
+				set_rds_ecc(num);
+			else if(num == 0)
+				/* we wouldn't be able to disable it */
+				set_rds_ecc(0);
+			return;
+		}
+		#ifdef ODA_RTP
+		if (CMD_MATCHES("RTP")) {
+			char tag_names[2][32];
+			uint8_t tags[6];
+			if (sscanf((char *)arg, "%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
+				&tags[0], &tags[1], &tags[2], &tags[3],
+				&tags[4], &tags[5]) == 6) {
+				set_rds_rtplus_tags(tags);
+			} else if (sscanf((char *)arg, "%31[^,],%hhu,%hhu,%31[^,],%hhu,%hhu",
+				tag_names[0], &tags[1], &tags[2],
+				tag_names[1], &tags[4], &tags[5]) == 6) {
+				tags[0] = get_rtp_tag_id(tag_names[0]);
+				tags[3] = get_rtp_tag_id(tag_names[1]);
+				set_rds_rtplus_tags(tags);
+			}
+			return;
+		}
+		#endif
 		if (CMD_MATCHES("MPX")) {
 #ifdef RDS2
 			float gains[5];
@@ -174,36 +250,6 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_pty(strtoul((char *)arg, NULL, 10));
 			return;
 		}
-		if (CMD_MATCHES("ECC")) {
-			arg[2] = 0;
-			unsigned long num = strtoul((char *)arg, NULL, 16);
-			if (num >= 0xD0 && num <= 0xF4)
-				set_rds_ecc(num);
-			else if(num == 0)
-				/* we wouldn't be able to disable it */
-				set_rds_ecc(0);
-			return;
-		}
-		#ifdef ODA_RTP
-		if (CMD_MATCHES("RTP")) {
-			char tag_names[2][32];
-			uint8_t tags[6];
-			if (sscanf((char *)arg, "%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
-				&tags[0], &tags[1], &tags[2], &tags[3],
-				&tags[4], &tags[5]) == 6) {
-				set_rds_rtplus_tags(tags);
-				set_rds_rtplus_running(1);
-			} else if (sscanf((char *)arg, "%31[^,],%hhu,%hhu,%31[^,],%hhu,%hhu",
-				tag_names[0], &tags[1], &tags[2],
-				tag_names[1], &tags[4], &tags[5]) == 6) {
-				tags[0] = get_rtp_tag_id(tag_names[0]);
-				tags[3] = get_rtp_tag_id(tag_names[1]);
-				set_rds_rtplus_tags(tags);
-				set_rds_rtplus_running(1);
-			}
-			return;
-		}
-		#endif
 	}
 	if (cmd_len > 3 && str[2] == '=') {
 		cmd = str;
@@ -268,23 +314,26 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rdsgen(strtoul((char *)arg, NULL, 10));
 			return;
 		}
+
+		/* TODO: PTYEN */
+	}
+
+	if (cmd_len > 5 && str[4] == ' ') {
+		cmd = str;
+		cmd[4] = 0;
+		arg = str + 5;
+
 		#ifdef ODA_RTP
-		if (CMD_MATCHES("RTPRUN")) {
+		if (CMD_MATCHES("RTPF")) {
 			arg[1] = 0;
-			uint8_t val = strtoul((char *)arg, NULL, 10);
-			if(val == 0 && val == 1) {
-				set_rds_rtplus_enabled(1);
-				set_rds_rtplus_running(val);
-			} else if(val == 3) {
-				set_rds_rtplus_enabled(0);
-			}
+			set_rds_rtplus_flags(strtoul((char *)arg, NULL, 10));
 			return;
 		}
 		#endif
-
-		if (CMD_MATCHES("PTYNEN")) {
-			arg[1] = 0;
-			set_rds_ptyn_enabled(strtoul((char *)arg, NULL, 10));
+		if (CMD_MATCHES("PTYN")) {
+			arg[PTYN_LENGTH] = 0;
+			if (arg[0] == '-') arg[0] = 0;
+			set_rds_ptyn(xlat(arg));
 			return;
 		}
 	}
