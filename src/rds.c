@@ -300,6 +300,7 @@ static void init_rtplus(uint8_t group) {
 	register_oda(group, ODA_AID_RTPLUS, 0);
 	rtplus_cfg.group = group;
 	rtplus_cfg.toggle = 1;
+	rtplus_cfg.enabled = 1;
 }
 #endif
 
