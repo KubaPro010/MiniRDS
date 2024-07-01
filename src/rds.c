@@ -828,6 +828,10 @@ void set_rds_ct(uint8_t ct) {
 	rds_data.ct = ct & INT8_0;
 }
 
+uint16_t get_rds_pi() {
+	return rds_data.pi;
+}
+
 #ifdef CGG
 void set_rds_cg(uint16_t* blocks) {
 	rds_state.custom_group[0] = blocks[0];
@@ -837,7 +841,3 @@ void set_rds_cg(uint16_t* blocks) {
 	rds_state.custom_group_in = 1;
 }
 #endif
-
-uint16_t get_rds_pi() {
-	return rds_data.pi;
-}

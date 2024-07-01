@@ -29,7 +29,6 @@ extern void add_checkwords(uint16_t *blocks, uint8_t *bits, bool rds2);
 #else
 extern void add_checkwords(uint16_t *blocks, uint8_t *bits);
 #endif
-extern uint16_t callsign2pi(unsigned char *callsign);
 extern uint8_t add_rds_af(struct rds_af_t *af_list, float freq);
 extern char *show_af_list(struct rds_af_t af_list);
 extern uint16_t crc16(uint8_t *data, size_t len);
