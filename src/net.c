@@ -25,14 +25,14 @@
 #include "net.h"
 #include "ascii_cmd.h"
 
-static int listener_fd; /* fd of the listener */
-static int current_fd; /* fd of the current connection */
-static struct sockaddr_in6 my_sock;
-static struct sockaddr_in6 peer_sock;
-static socklen_t peer_addr_size;
-static struct pollfd sock_poller;
-static struct pollfd peer_poller;
-static struct pollfd curr_sock_poller;
+int listener_fd; /* fd of the listener */
+int current_fd; /* fd of the current connection */
+struct sockaddr_in6 my_sock;
+struct sockaddr_in6 peer_sock;
+socklen_t peer_addr_size;
+struct pollfd sock_poller;
+struct pollfd peer_poller;
+struct pollfd curr_sock_poller;
 
 uint8_t already_connected = 0;
 
