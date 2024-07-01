@@ -238,6 +238,11 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_rt(xlat(arg));
 			return;
 		}
+		if (CMD_MATCHES("PTYN")) {
+			arg[PTYN_LENGTH] = 0;
+			set_rds_ptyn(xlat(arg));
+			return;
+		}
 	}
 	if (cmd_len > 4 && str[3] == '=') {
 		cmd = str;
@@ -293,15 +298,33 @@ void process_ascii_cmd(unsigned char *str) {
 		arg = str + 2;
 		if (CMD_MATCHES("G")) {
 			uint16_t blocks[4];
-			blocks[0] = get_rds_pi();
-		    int count = sscanf((char *)arg, "%4hx%4hx%4hx", &blocks[1], &blocks[2], &blocks[3]);
-			if(count == 3) {
-				set_rds_cg(blocks);
+			if(arg[15] == 0){
+				/* RDS2 Group*/
+			} else if(arg[11] == 0) {
+				/* RDS1 Group*/
+				blocks[0] = get_rds_pi();
+				int count = sscanf((char *)arg, "%4hx%4hx%4hx", &blocks[1], &blocks[2], &blocks[3]);
+				if(count == 3) {
+					set_rds_cg(blocks);
+				}
 			}
 			return;
 		}
 	}
 	#endif
+	if (cmd_len > 7 && str[6] == '=') {
+		cmd = str;
+		cmd[6] = 0;
+		arg = str + 7;
+
+		if (CMD_MATCHES("RDSGEN")) {
+			arg[1] = 0;
+			set_rdsgen(strtoul((char *)arg, NULL, 10));
+			return;
+		}
+
+		/* TODO: PTYEN */
+	}
 
 	if (cmd_len > 5 && str[4] == ' ') {
 		cmd = str;

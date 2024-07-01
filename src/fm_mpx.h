@@ -42,4 +42,5 @@ extern void fm_mpx_init(uint32_t sample_rate);
 extern void fm_rds_get_frames(float *outbuf, size_t num_frames);
 extern void fm_mpx_exit();
 extern void set_output_volume(float vol);
+extern void set_rdsgen(uint8_t gen);
 extern void set_carrier_volume(uint8_t carrier, float new_volume);

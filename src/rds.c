@@ -752,7 +752,6 @@ void set_rds_lps(unsigned char *lps) {
 #ifdef ODA_RTP
 void set_rds_rtplus_flags(uint8_t flags) {
 	rtplus_cfg.running	= (flags & INT8_1) >> 1;
-	rtplus_cfg.toggle	= rds_state.rt_ab;
 }
 
 void set_rds_rtplus_tags(uint8_t *tags) {
@@ -762,6 +761,8 @@ void set_rds_rtplus_tags(uint8_t *tags) {
 	rtplus_cfg.type[1]	= tags[3] & INT8_L6;
 	rtplus_cfg.start[1]	= tags[4] & INT8_L6;
 	rtplus_cfg.len[1]	= tags[5] & INT8_L5;
+
+	rtpluc_cfg.toggle ^= 1;
 }
 #endif
 

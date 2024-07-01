@@ -9,7 +9,7 @@ This aims to have the around the same options as UECP should have, this is what 
 - (Paging skipped)
 - (No CT time adjustments)
 - RDS on/off (low priority)
-- RDS phase (might be medium)
+- RDS phase (might be medium, 9.5 degree steps)
 - RDS level (kinda done?)
 - (ARI skipped)
 

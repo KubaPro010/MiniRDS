@@ -40,9 +40,16 @@ static struct osc_t osc_76k;
 
 static float mpx_vol;
 
+static uint8_t rdsgen;
+
 void set_output_volume(float vol) {
 	if (vol > 100.0f) vol = 100.0f;
 	mpx_vol = vol / 100.0f;
+}
+
+void set_rdsgen(uint8_t gen) {
+	if (gen > 2) vol = 2;
+	rdsgen = gen;
 }
 
 /* subcarrier volumes */
@@ -71,10 +78,12 @@ void fm_mpx_init(uint32_t sample_rate) {
 	/* initialize the subcarrier oscillators */
 	osc_init(&osc_19k, sample_rate, 19000.0f);
 	osc_init(&osc_57k, sample_rate, 57000.0f);
+	rdsgen = 1;
 #ifdef RDS2
 	osc_init(&osc_67k, sample_rate, 66500.0f);
 	osc_init(&osc_71k, sample_rate, 71250.0f);
 	osc_init(&osc_76k, sample_rate, 76000.0f);
+	rdsgen = 2;
 #endif
 }
 
@@ -97,31 +106,43 @@ void fm_rds_get_frames(float *outbuf, size_t num_frames) {
 		/* RDS2 is quadrature phase */
 
 		/* 90 degree shift */
-		out += osc_get_sin(&osc_67k)
-			* get_rds_sample(1)
-			* volumes[MPX_SUBCARRIER_RDS2_STREAM_1];
+		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_1] != 0) {
+			out += osc_get_sin(&osc_67k)
+				* get_rds_sample(1)
+				* volumes[MPX_SUBCARRIER_RDS2_STREAM_1];
+		}
 
 		/* 180 degree shift */
-		out += -osc_get_cos(&osc_71k)
-			* get_rds_sample(2)
-			* volumes[MPX_SUBCARRIER_RDS2_STREAM_2];
+		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_2] != 0) {
+			out += -osc_get_cos(&osc_71k)
+				* get_rds_sample(2)
+				* volumes[MPX_SUBCARRIER_RDS2_STREAM_2];
+		}
 
 		/* 270 degree shift */
-		out += -osc_get_sin(&osc_76k)
-			* get_rds_sample(3)
-			* volumes[MPX_SUBCARRIER_RDS2_STREAM_3];
+		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_3] != 0) {
+			out += -osc_get_sin(&osc_76k)
+				* get_rds_sample(3)
+				* volumes[MPX_SUBCARRIER_RDS2_STREAM_3];
+		}
 #else
-		out += osc_get_cos(&osc_67k)
-			* get_rds_sample(1)
-			* volumes[MPX_SUBCARRIER_RDS2_STREAM_1];
+		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_1] != 0) {
+			out += osc_get_cos(&osc_67k)
+				* get_rds_sample(1)
+				* volumes[MPX_SUBCARRIER_RDS2_STREAM_1];
+		}
 
-		out += osc_get_cos(&osc_71k)
-			* get_rds_sample(2)
-			* volumes[MPX_SUBCARRIER_RDS2_STREAM_2];
+		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_1] != 0) {
+			out += osc_get_cos(&osc_71k)
+				* get_rds_sample(2)
+				* volumes[MPX_SUBCARRIER_RDS2_STREAM_2];
+		}
 
-		out += osc_get_cos(&osc_76k)
-			* get_rds_sample(3)
-			* volumes[MPX_SUBCARRIER_RDS2_STREAM_3];
+		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_3] != 0) {
+			out += osc_get_cos(&osc_76k)
+				* get_rds_sample(3)
+				* volumes[MPX_SUBCARRIER_RDS2_STREAM_3];
+		}
 #endif
 #endif
 
@@ -139,7 +160,8 @@ void fm_rds_get_frames(float *outbuf, size_t num_frames) {
 		out = fmaxf(-1.0f, out);
 
 		/* adjust volume and put into both channels */
-		outbuf[j+0] = outbuf[j+1] = out * mpx_vol;
+		if(rdsgen != 0)
+			outbuf[j+0] = outbuf[j+1] = out * mpx_vol;
 		j += 2;
 
 	}
