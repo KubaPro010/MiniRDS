@@ -762,7 +762,7 @@ void set_rds_rtplus_tags(uint8_t *tags) {
 	rtplus_cfg.start[1]	= tags[4] & INT8_L6;
 	rtplus_cfg.len[1]	= tags[5] & INT8_L5;
 
-	rtpluc_cfg.toggle ^= 1;
+	rtplus_cfg.toggle ^= 1;
 }
 #endif
 
