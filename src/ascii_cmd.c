@@ -230,6 +230,9 @@ void process_ascii_cmd(unsigned char *str) {
 
 	if (cmd_len > 5 && str[4] == '=') {
 		/* compatibilty with existing (standarts)*/
+		cmd = str;
+		cmd[4] = 0;
+		arg = str + 5;
 		if (CMD_MATCHES("TEXT")) {
 			arg[RT_LENGTH * 2] = 0;
 			set_rds_rt(xlat(arg));
@@ -237,6 +240,9 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 	}
 	if (cmd_len > 4 && str[3] == '=') {
+		cmd = str;
+		cmd[3] = 0;
+		arg = str + 4;
 		if (CMD_MATCHES("RT1")) {
 			arg[RT_LENGTH * 2] = 0;
 			set_rds_rt(xlat(arg));
@@ -249,6 +255,10 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 	}
 	if (cmd_len > 3 && str[2] == '=') {
+		cmd = str;
+		cmd[2] = 0;
+		arg = str + 3;
+
 		if (CMD_MATCHES("CT")) {
 			set_rds_ct(arg[0]);
 			return;
@@ -278,6 +288,9 @@ void process_ascii_cmd(unsigned char *str) {
 	}
 	#ifdef CCG
 	if (cmd_len > 2 && str[1] == '=') {
+		cmd = str;
+		cmd[1] = 0;
+		arg = str + 2;
 		if (CMD_MATCHES("G")) {
 			uint16_t blocks[4];
 			blocks[0] = get_rds_pi();
