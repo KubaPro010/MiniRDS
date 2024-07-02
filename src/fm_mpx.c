@@ -108,39 +108,39 @@ void fm_rds_get_frames(float *outbuf, size_t num_frames) {
 		/* 90 degree shift */
 		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_1] != 0) {
 			out += osc_get_sin(&osc_67k)
-				* get_rds_sample(1)
+				* get_rds_sample(1, 0)
 				* volumes[MPX_SUBCARRIER_RDS2_STREAM_1];
 		}
 
 		/* 180 degree shift */
 		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_2] != 0) {
 			out += -osc_get_cos(&osc_71k)
-				* get_rds_sample(2)
+				* get_rds_sample(2, 0)
 				* volumes[MPX_SUBCARRIER_RDS2_STREAM_2];
 		}
 
 		/* 270 degree shift */
 		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_3] != 0) {
 			out += -osc_get_sin(&osc_76k)
-				* get_rds_sample(3)
+				* get_rds_sample(3, 0)
 				* volumes[MPX_SUBCARRIER_RDS2_STREAM_3];
 		}
 #else
 		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_1] != 0) {
 			out += osc_get_cos(&osc_67k)
-				* get_rds_sample(1)
+				* get_rds_sample(1, 0)
 				* volumes[MPX_SUBCARRIER_RDS2_STREAM_1];
 		}
 
 		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_1] != 0) {
 			out += osc_get_cos(&osc_71k)
-				* get_rds_sample(2)
+				* get_rds_sample(2, 0)
 				* volumes[MPX_SUBCARRIER_RDS2_STREAM_2];
 		}
 
 		if(rdsgen == 2 && volumes[MPX_SUBCARRIER_RDS2_STREAM_3] != 0) {
 			out += osc_get_cos(&osc_76k)
-				* get_rds_sample(3)
+				* get_rds_sample(3, 0)
 				* volumes[MPX_SUBCARRIER_RDS2_STREAM_3];
 		}
 #endif
