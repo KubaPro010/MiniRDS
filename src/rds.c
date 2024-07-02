@@ -29,9 +29,13 @@ static struct rds_params_t rds_data;
 /* RDS data controls */
 static struct {
 	uint8_t ps_update;
+
 	uint8_t rt_update;
 	uint8_t rt_ab;
 	uint8_t rt_segments;
+
+	/* PTYN */
+	uint8_t ptyn_enabled;
 	uint8_t ptyn_update;
 	uint8_t ptyn_ab;
 
@@ -58,6 +62,7 @@ static struct {
 /* RT+ */
 static struct {
 	uint8_t group;
+	uint8_t enabled;
 	uint8_t running;
 	uint8_t toggle;
 	uint8_t type[2];
@@ -105,8 +110,7 @@ static uint16_t get_next_af() {
 	return out;
 }
 
-/* PS group (0A)
- */
+/* PS group (0A) */
 static void get_rds_ps_group(uint16_t *blocks) {
 	static unsigned char ps_text[PS_LENGTH];
 	static uint8_t ps_state;
@@ -138,8 +142,7 @@ static void get_rds_ps_group(uint16_t *blocks) {
 	if (ps_state == 4) ps_state = 0;
 }
 
-/* RT group (2A)
- */
+/* RT group (2A) */
 static uint8_t get_rds_rt_group(uint16_t *blocks) {
 	static unsigned char rt_text[RT_LENGTH];
 	static uint8_t rt_state;
@@ -173,10 +176,16 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
  */
 #ifdef ODA
 static void get_rds_oda_group(uint16_t *blocks) {
-	blocks[1] |= 3 << 12;
-
 	/* select ODA */
 	struct rds_oda_t this_oda = odas[oda_state.current];
+
+	#ifdef ODA_RTP
+	if(this_oda.aid == ODA_AID_RTPLUS && rtplus_cfg.enabled == 0) {
+		return;
+	}
+	#endif
+
+	blocks[1] |= 3 << 12;
 
 	blocks[1] |= GET_GROUP_TYPE(this_oda.group) << 1;
 	blocks[1] |= GET_GROUP_VER(this_oda.group);
@@ -230,8 +239,7 @@ static uint8_t get_rds_ct_group(uint16_t *blocks) {
 	return 0;
 }
 
-/* PTYN group (10A)
- */
+/* PTYN group (10A) */
 static void get_rds_ptyn_group(uint16_t *blocks) {
 	static unsigned char ptyn_text[PTYN_LENGTH];
 	static uint8_t ptyn_state;
@@ -285,12 +293,21 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 	*/
 }
 
+#ifdef 0
+/* too lazy to do it now*/
+static void get_rds_lic_group(uint16_t *blocks) {
+	blocks[1] |= 1 << 12;
+	blocks[2] = (rds_data.lic | 0x3000);
+}
+#endif
+
 /* RT+ */
 #ifdef ODA_RTP
 static void init_rtplus(uint8_t group) {
 	register_oda(group, ODA_AID_RTPLUS, 0);
 	rtplus_cfg.group = group;
 	rtplus_cfg.toggle = 1;
+	rtplus_cfg.enabled = 1;
 }
 #endif
 
@@ -340,7 +357,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	#endif
 
 	/* Type 10A groups */
-	if (rds_data.ptyn[0]) {
+	if (rds_state.ptyn_enabled && rds_data.ptyn[0]) {
 		if (++group_counter[GROUP_10A] >= 13) {
 			group_counter[GROUP_10A] = 0;
 			/* Do not generate a 10A group if PTYN is off */
@@ -601,7 +618,12 @@ void set_rds_lps(unsigned char *lps) {
 
 #ifdef ODA_RTP
 void set_rds_rtplus_flags(uint8_t flags) {
-	rtplus_cfg.running	= (flags & INT8_1) >> 1;
+	if(flags == 2) {
+		rtplus_cfg.enabled = 0;
+	} else {
+		rtplus_cfg.enabled = 1;
+	}
+	rtplus_cfg.running	= flags & INT8_0;
 }
 
 void set_rds_rtplus_tags(uint8_t *tags) {
@@ -613,6 +635,7 @@ void set_rds_rtplus_tags(uint8_t *tags) {
 	rtplus_cfg.len[1]	= tags[5] & INT8_L5;
 
 	rtplus_cfg.toggle ^= 1;
+	rtplus_cfg.running = 1;
 }
 #endif
 
@@ -626,6 +649,10 @@ void clear_rds_af() {
 
 void set_rds_pty(uint8_t pty) {
 	rds_data.pty = pty & INT8_L5;
+}
+
+void set_rds_ptyn_enabled(uint8_t enabled) {
+	rds_state.ptyn_enabled = enabled & INT8_0;
 }
 
 void set_rds_ptyn(unsigned char *ptyn) {

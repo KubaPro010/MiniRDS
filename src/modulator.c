@@ -117,7 +117,11 @@ void exit_rds_objects() {
 /* Get an RDS sample. This generates the envelope of the waveform using
  * pre-generated elementary waveform samples.
  */
+#ifdef RDS2
+float get_rds_sample(uint8_t stream_num, uint8_t rds2tunneling) {
+#else
 float get_rds_sample(uint8_t stream_num) {
+#endif
 	struct rds_t *rds;
 	uint16_t idx;
 	float *cur_waveform;
@@ -129,8 +133,12 @@ float get_rds_sample(uint8_t stream_num) {
 	if (rds->sample_count == SAMPLES_PER_BIT) {
 		if (rds->bit_pos == BITS_PER_GROUP) {
 #ifdef RDS2
-			if (stream_num > 0) {
-				get_rds2_bits(stream_num, rds->bit_buffer);
+			if(!rds2tunneling) {
+				if (stream_num > 0) {
+					get_rds2_bits(stream_num, rds->bit_buffer);
+				} else {
+					get_rds_bits(rds->bit_buffer);
+				}
 			} else {
 				get_rds_bits(rds->bit_buffer);
 			}

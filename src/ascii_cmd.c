@@ -1,4 +1,6 @@
 /*
+ * MiniRDS - FM RDS Encoder
+ * contains code from:
  * mpxgen - FM multiplex encoder with Stereo and RDS
  * Copyright (C) 2019 Anthony96922
  *
@@ -24,11 +26,6 @@
 
 #define CMD_MATCHES(a) (ustrcmp(cmd, (unsigned char *)a) == 0)
 
-/*
- * If a command is received, process it and update the RDS data.
- *
- */
-
 void process_ascii_cmd(unsigned char *str) {
 	unsigned char *cmd, *arg;
 	uint16_t cmd_len = 0;
@@ -37,15 +34,11 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd_len++;
 
 	if (cmd_len > 3 && str[2] == ' ') {
+		/* TODO: Deprecate the old format*/
 		cmd = str;
 		cmd[2] = 0;
 		arg = str + 3;
 
-		if (CMD_MATCHES("PS")) {
-			arg[PS_LENGTH * 2] = 0;
-			set_rds_ps(xlat(arg));
-			return;
-		}
 		if (CMD_MATCHES("RT")) {
 			arg[RT_LENGTH * 2] = 0;
 			set_rds_rt(xlat(arg));
@@ -54,6 +47,7 @@ void process_ascii_cmd(unsigned char *str) {
 
 		#ifdef CGG
 		if (CMD_MATCHES("CG")) {
+			/* this stays*/
 			uint16_t blocks[4];
 			int count = sscanf((const char*)arg, "%hX %hX %hX %hX",
 							&blocks[0], &blocks[1],
@@ -66,7 +60,8 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 		#endif
 		if (CMD_MATCHES("AF")) {
-			/* TODO: work on existing AF list */
+			/* TODO: Convert to ASCII format (https://pira.cz/rds/p164man.pdf page 38)*/
+			/* TODO: Add AFCH*/
 			uint8_t arg_count;
 			rds_af_t new_af;
 			char af_cmd;
@@ -184,6 +179,7 @@ void process_ascii_cmd(unsigned char *str) {
 				set_rds_ecc(0);
 			return;
 		}
+
 		#ifdef ODA_RTP
 		if (CMD_MATCHES("RTP")) {
 			char tag_names[2][32];
@@ -191,19 +187,18 @@ void process_ascii_cmd(unsigned char *str) {
 			if (sscanf((char *)arg, "%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
 				&tags[0], &tags[1], &tags[2], &tags[3],
 				&tags[4], &tags[5]) == 6) {
-				set_rds_rtplus_flags(2);
 				set_rds_rtplus_tags(tags);
 			} else if (sscanf((char *)arg, "%31[^,],%hhu,%hhu,%31[^,],%hhu,%hhu",
 				tag_names[0], &tags[1], &tags[2],
 				tag_names[1], &tags[4], &tags[5]) == 6) {
 				tags[0] = get_rtp_tag_id(tag_names[0]);
 				tags[3] = get_rtp_tag_id(tag_names[1]);
-				set_rds_rtplus_flags(2);
 				set_rds_rtplus_tags(tags);
 			}
 			return;
 		}
 		#endif
+
 	}
 	if (cmd_len > 3 && str[2] == '=') {
 		cmd = str;
@@ -269,25 +264,34 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 
-		/* TODO: PTYEN */
-	}
-
-	if (cmd_len > 5 && str[4] == ' ') {
-		cmd = str;
-		cmd[4] = 0;
-		arg = str + 5;
+		if (CMD_MATCHES("PTYNEN")) {
+			arg[1] = 0;
+			set_rds_ptyn_enabled(strtoul((char *)arg, NULL, 10));
+			return;
+		}
 
 		#ifdef ODA_RTP
-		if (CMD_MATCHES("RTPF")) {
+		if (CMD_MATCHES("RTPRUN")) {
 			arg[1] = 0;
 			set_rds_rtplus_flags(strtoul((char *)arg, NULL, 10));
 			return;
 		}
 		#endif
-		if (CMD_MATCHES("PTYN")) {
-			arg[PTYN_LENGTH] = 0;
-			if (arg[0] == '-') arg[0] = 0;
-			set_rds_ptyn(xlat(arg));
+	}
+	if (cmd_len > 6 && str[5] == '=') {
+		cmd = str;
+		cmd[5] = 0;
+		arg = str + 6;
+		if (CMD_MATCHES("LEVEL")) {
+			uint8_t val = strtoul((char *)arg, NULL, 10);
+			val /= 255;
+			val *= 15; /* max value*/
+			#ifdef RDS2
+			set_carrier_volume(1, val);
+			set_carrier_volume(2, val);
+			#else
+			set_carrier_volume(1, val);
+			#endif
 			return;
 		}
 	}

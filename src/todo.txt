@@ -9,3 +9,14 @@ ASCII commands to implement:
 - Group sequence
 - Short RT
 - Bidirectionality
+
+ASCII Group seqeunce:
+0 - Four 0As
+1 - 1A
+2 - 2A
+A - 10A
+E - 14A 14B
+X - UDG1
+Y - UDG2
+R - RT+ 3A 11A
+F - 15A
