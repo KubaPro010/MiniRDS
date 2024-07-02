@@ -286,12 +286,7 @@ void process_ascii_cmd(unsigned char *str) {
 			uint8_t val = strtoul((char *)arg, NULL, 10);
 			val /= 255;
 			val *= 15; /* max value*/
-			#ifdef RDS2
 			set_carrier_volume(1, val);
-			set_carrier_volume(2, val);
-			#else
-			set_carrier_volume(1, val);
-			#endif
 			return;
 		}
 	}

@@ -370,6 +370,9 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	#ifdef ODA_RTP
 	if (++group_counter[rtplus_cfg.group] >= 30) {
 		group_counter[rtplus_cfg.group] = 0;
+		if(rtplus_cfg.enabled == 0) {
+			return 0;
+		}
 		get_rds_rtplus_group(blocks);
 		return 1;
 	}
