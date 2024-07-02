@@ -58,8 +58,8 @@ static float volumes[MPX_SUBCARRIER_END] = {
 	0.09f, /* RDS: 9% modulation */
 #ifdef RDS2
 	/* RDS2 */
-	0.08f, //66.5  khz 8%
-	0.08f, //71.25 khz 8%
+	0.05f, //66.5  khz 5%
+	0.05f, //71.25 khz 5%
 	0.0f  //76     khz 0%
 #endif
 };
