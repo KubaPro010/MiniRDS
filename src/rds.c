@@ -293,7 +293,7 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 	*/
 }
 
-#ifdef 0
+#if 0
 /* too lazy to do it now*/
 static void get_rds_lic_group(uint16_t *blocks) {
 	blocks[1] |= 1 << 12;
