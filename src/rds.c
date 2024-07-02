@@ -290,6 +290,7 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 static void init_rtplus(uint8_t group) {
 	register_oda(group, ODA_AID_RTPLUS, 0);
 	rtplus_cfg.group = group;
+	rtplus_cfg.toggle = 1;
 }
 #endif
 
@@ -493,6 +494,7 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	rds_state.rt_ab = 1;
 	set_rds_rt(rds_params.rt);
 	set_rds_pty(rds_params.pty);
+	rds_state.ptyn_ab = 1;
 	set_rds_ptyn(rds_params.ptyn);
 	set_rds_tp(rds_params.tp);
 	set_rds_ecc(rds_params.ecc);
