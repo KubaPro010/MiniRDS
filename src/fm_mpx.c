@@ -99,7 +99,7 @@ void fm_rds_get_frames(float *outbuf, size_t num_frames) {
 			* volumes[MPX_SUBCARRIER_ST_PILOT];
 
 		out += osc_get_cos(&osc_57k)
-			* get_rds_sample(0)
+			* get_rds_sample(0, 0)
 			* volumes[MPX_SUBCARRIER_RDS_STREAM_0];
 #ifdef RDS2
 #ifdef RDS2_QUADRATURE_CARRIER
