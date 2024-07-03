@@ -210,11 +210,7 @@ keep_parsing_opts:
 			break;
 
 		case 'p': /* pty */
-			if (optarg[0] >= 'A') {
-				rds_params.pty = get_pty_code(optarg);
-			} else {
-				rds_params.pty = strtoul(optarg, NULL, 10);
-			}
+			rds_params.pty = strtoul(optarg, NULL, 10);
 			break;
 
 		case 'T': /* tp */
