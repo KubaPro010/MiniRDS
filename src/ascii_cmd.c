@@ -201,7 +201,7 @@ void process_ascii_cmd(unsigned char *str) {
 			uint8_t pin[3];
 			if (sscanf((char *)arg, "%hhu,%hhu,%hhu",
 				&pin[0], &pin[1], &pin[2]) == 3) {
-					set_rds_pin
+					set_rds_pin(pin[0], pin[1], pin[2]);
 			}
 			return;
 		}
