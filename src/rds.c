@@ -300,7 +300,7 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 static void get_rds_lic_group(uint16_t *blocks) {
 	blocks[1] |= 1 << 12;
 	if(rds_state.ecclic_enabled) {
-		blocks[2] = 0b0011000000000000; /* first 1 bit is the linkage actuator, the 3 after are variant codes which is 3 in this case */
+		blocks[2] = 0x3000; /* 0b0011000000000000 first 1 bit is the linkage actuator, the 3 after are variant codes which is 3 in this case */
 		blocks[2] |= rds_data.lic;
 	}
 
@@ -356,7 +356,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 				} else {
 					get_rds_lic_group(blocks);
 				}
-				rds_state.ecc_or_lic ^= 1
+				rds_state.ecc_or_lic ^= 1;
 			} else if(rds_data.ecc) {
 				get_rds_ecc_group(blocks);
 			} else if(rds_data.ecc) {
