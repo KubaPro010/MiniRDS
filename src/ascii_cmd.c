@@ -265,7 +265,7 @@ void process_ascii_cmd(unsigned char *str) {
 
 		if (CMD_MATCHES("PINEN")) {
 			arg[1] = 0;
-			set_rdsgen(strtoul((char *)arg, NULL, 10));
+			set_rds_pin_enabled(strtoul((char *)arg, NULL, 10));
 			return;
 		}
 	}
