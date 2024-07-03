@@ -39,12 +39,6 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[2] = 0;
 		arg = str + 3;
 
-		if (CMD_MATCHES("RT")) {
-			arg[RT_LENGTH * 2] = 0;
-			set_rds_rt(xlat(arg));
-			return;
-		}
-
 		#ifdef CGG
 		if (CMD_MATCHES("CG")) {
 			/* this stays*/
@@ -164,6 +158,12 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_rt(xlat(arg));
 			return;
 		}
+		if (CMD_MATCHES("RT2")) {
+			/* alias for RT1 incase program sends RT2 */
+			arg[RT_LENGTH * 2] = 0;
+			set_rds_rt(xlat(arg));
+			return;
+		}
 		if (CMD_MATCHES("PTY")) {
 			arg[2] = 0;
 			set_rds_pty(strtoul((char *)arg, NULL, 10));
@@ -241,6 +241,7 @@ void process_ascii_cmd(unsigned char *str) {
 			uint16_t blocks[4];
 			if(cmd_len == 18){
 				/* RDS2 Group*/
+				/* do a ifdef rds2 here when implementing*/
 			} else if(cmd_len == 14) {
 				/* RDS1 Group*/
 				blocks[0] = get_rds_pi();
@@ -286,7 +287,12 @@ void process_ascii_cmd(unsigned char *str) {
 			uint8_t val = strtoul((char *)arg, NULL, 10);
 			val /= 255;
 			val *= 15; /* max value*/
+			#ifdef RDS2
 			set_carrier_volume(1, val);
+			set_carrier_volume(2, val);
+			#else
+			set_carrier_volume(1, val);
+			#endif
 			return;
 		}
 	}

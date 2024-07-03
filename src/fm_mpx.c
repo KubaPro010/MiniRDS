@@ -48,7 +48,11 @@ void set_output_volume(float vol) {
 }
 
 void set_rdsgen(uint8_t gen) {
+	#ifdef RDS2
 	if (gen > 2) gen = 2;
+	#else
+	if (gen > 1) gen = 1;
+	#endif
 	rdsgen = gen;
 }
 

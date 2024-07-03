@@ -2,7 +2,6 @@ Current TODO for RDS encoding:
 - UECP Decoding
 - X-Command (may not be implemented)
 - Dynamic PS (may not be implemented)
-- RDS2 tunneling
 
 ASCII commands to implement:
 - AF

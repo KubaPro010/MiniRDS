@@ -49,36 +49,6 @@ int ustrcmp(const unsigned char *s1, const unsigned char *s2) {
 	return c1 - c2;
 }
 
-/* RDS PTY list */
-static char *ptys[32] = {
-	/* ETSI */
-	"None", "News", "Current affairs", "Information",
-	"Sport", "Education", "Drama", "Culture", "Science",
-	"Varied", "Pop music", "Rock music", "Easy listening",
-	"Light classical", "Serious classical", "Other music",
-	"Weather", "Finance", "Children's programs",
-	"Social affairs", "Religion", "Phone-in", "Travel",
-	"Leisure", "Jazz music", "Country music",
-	"National music", "Oldies music", "Folk music",
-	"Documentary", "Alarm test", "Alarm"
-};
-
-char *get_pty_str(uint8_t pty_code) {
-	if (pty_code > 31) pty_code = 0;
-	return (char *)ptys[pty_code];
-}
-
-uint8_t get_pty_code(char *pty_str) {
-	uint8_t pty_code = 0;
-	for (uint8_t i = 0; i < 32; i++) {
-		if (strcmp(pty_str, ptys[i]) == 0) {
-			pty_code = i;
-			break;
-		}
-	}
-	return pty_code;
-}
-
 #ifdef ODA_RTP
 static char *rtp_content_types[64] = {
 	/* dummy */

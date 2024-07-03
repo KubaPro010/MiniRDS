@@ -20,8 +20,6 @@ extern void msleep(unsigned long ms);
 
 extern int ustrcmp(const unsigned char *s1, const unsigned char *s2);
 
-extern uint8_t get_pty_code(char *pty_str);
-extern char *get_pty_str(uint8_t pty_code);
 extern uint8_t get_rtp_tag_id(char *rtp_tag_name);
 extern char *get_rtp_tag_name(uint8_t rtp_tag);
 #ifdef RDS2
