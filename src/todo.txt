@@ -1,13 +1,12 @@
 Current TODO for RDS encoding:
 - UECP Decoding
-- X-Command (may not be implemented)
 - Dynamic PS (may not be implemented)
+- Bidirectionality
 
 ASCII commands to implement:
 - AF
 - Group sequence
 - Short RT
-- Bidirectionality
 
 ASCII Group seqeunce:
 0 - Four 0As
@@ -21,3 +20,7 @@ R - RT+ 3A 11A
 F - 15A
 
 Note that most of this is takes out of pira.cz's P164 RDS Encoder's manual: https://pira.cz/rds/p164man.pdf
+
+I plan for this's commands to be similiar to PIRA32's or P164's (both are made by pira.cz)
+
+In theory, now you can use the MiniRDS as a PIRA32 type device in Magic RDS 4 (but not everything is supported)

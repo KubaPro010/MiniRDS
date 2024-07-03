@@ -60,6 +60,7 @@ typedef struct rds_af_t {
 
 typedef struct rds_params_t {
 	uint16_t pi;
+	uint16_t lic; /* lic should have 12 bits*/
 	uint8_t ecc;
 	uint8_t ta;
 	uint8_t pty;
@@ -83,7 +84,6 @@ typedef struct rds_params_t {
 	unsigned char lps[LPS_LENGTH];
 
 	/* PIN */
-	uint8_t pin_enabled;
 	uint8_t pin_day;
 	uint8_t pin_hour;
 	uint8_t pin_minute;
@@ -294,6 +294,8 @@ extern void exit_rds_encoder();
 extern void get_rds_bits(uint8_t *bits);
 extern void set_rds_pi(uint16_t pi_code);
 extern void set_rds_ecc(uint8_t ecc);
+extern void set_rds_lic(uint8_t lic);
+extern void set_rds_ecclic_toggle(uint8_t toggle);
 extern void set_rds_pin_enabled(uint8_t enabled);
 extern void set_rds_pin(uint8_t day, uint8_t hour, uint8_t minute);
 extern void set_rds_rt_ab(uint8_t ab);

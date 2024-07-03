@@ -28,6 +28,11 @@ static struct rds_params_t rds_data;
 
 /* RDS data controls */
 static struct {
+	uint8_t ecclic_enabled;
+	uint8_t ecc_or_lic;
+
+	uint8_t pin_enabled;
+
 	uint8_t ps_update;
 
 	uint8_t rt_update;
@@ -281,12 +286,29 @@ static void get_rds_lps_group(uint16_t *blocks) {
 
 static void get_rds_ecc_group(uint16_t *blocks) {
 	blocks[1] |= 1 << 12;
-	blocks[2] = rds_data.ecc;
+	if(rds_state.ecclic_enabled) {
+		blocks[2] = rds_data.ecc;
+	}
 
-	if(rds_data.pin_enabled) {
+	if(rds_state.pin_enabled) {
 		blocks[3] = rds_data.pin_day << 11; /* first 5 bits */
 		blocks[3] |= rds_data.pin_hour << 6; /* 5-10 bits from start */
 		blocks[3] |= rds_data.pin_minute; /* 10-16 bits from start */
+	}
+}
+
+static void get_rds_lic_group(uint16_t *blocks) {
+	blocks[1] |= 1 << 12;
+	if(rds_state.ecclic_enabled) {
+		blocks[2] = 0b0011000000000000; /* first 1 bit is the linkage actuator, the 3 after are variant codes which is 3 in this case */
+		blocks[2] |= rds_data.lic;
+	}
+
+	if(rds_state.pin_enabled) {
+		/* pin is also in lic as it also is a 1a group*/
+		blocks[3] = rds_data.pin_day << 11;
+		blocks[3] |= rds_data.pin_hour << 6;
+		blocks[3] |= rds_data.pin_minute;
 	}
 }
 
@@ -325,10 +347,21 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	static uint8_t group_counter[GROUP_15B];
 
 	/* Type 1A groups */
-	if (rds_data.ecc) {
+	if (rds_data.ecc || rds_data.lic) {
 		if (++group_counter[GROUP_1A] >= 22) {
 			group_counter[GROUP_1A] = 0;
-			get_rds_ecc_group(blocks);
+			if(rds_data.ecc && rds_data.lic) {
+				if(rds_state.ecc_or_lic == 0) {
+					get_rds_ecc_group(blocks);
+				} else {
+					get_rds_lic_group(blocks);
+				}
+				rds_state.ecc_or_lic ^= 1
+			} else if(rds_data.ecc) {
+				get_rds_ecc_group(blocks);
+			} else if(rds_data.ecc) {
+				get_rds_lic_group(blocks);
+			}
 			return 1;
 		}
 	}
@@ -531,11 +564,19 @@ void set_rds_pi(uint16_t pi_code) {
 }
 
 void set_rds_ecc(uint8_t ecc) {
-	rds_data.ecc = ecc;
+	rds_data.ecc = ecc; /* ecc is 8 bits, so a byte */
+}
+
+void set_rds_lic(uint8_t lic) {
+	rds_data.lic = lic & INT16_L12; /* lic is 12 bits */
+}
+
+void set_rds_ecclic_toggle(uint8_t toggle) {
+	rds_state.ecclic_enabled = toggle & INT8_0;
 }
 
 void set_rds_pin_enabled(uint8_t enabled) {
-	rds_data.pin_enabled = enabled & INT8_0;
+	rds_state.pin_enabled = enabled & INT8_0;
 }
 
 void set_rds_pin(uint8_t day, uint8_t hour, uint8_t minute) {

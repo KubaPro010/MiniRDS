@@ -4,6 +4,8 @@ This program is designed for generating a realtime RDS signal. It is capable of 
 
 This is based on the RDS encoder from [Mpxgen](https://github.com/Anthony96922/mpxgen), which is currently not maintained.
 
+Note that some missing groups were added from [librds](https://flerken.zapto.org:1115/kuba/librds), [my](https://flerken.zapto.org:1115/kuba) other project
+
 #### Features
 - Low resource requirements
 - Support for basic RDS data fields: PS, RT, PTY and AF

@@ -52,7 +52,7 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 		if (CMD_MATCHES("AF")) {
-			/* TODO: Convert to ASCII format (https://pira.cz/rds/p164man.pdf page 38)*/
+			/* TODO: Convert to ASCII format (https://pira.cz/rds/p164man.pdf page 38 or https://pira.cz/rds/manual.pdf page 27)*/
 			/* TODO: Add AFCH*/
 			uint8_t arg_count;
 			rds_af_t new_af;
@@ -163,12 +163,12 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 		if (CMD_MATCHES("ECC")) {
 			arg[2] = 0;
-			unsigned long num = strtoul((char *)arg, NULL, 16);
-			if (num >= 0xA0 && num <= 0xF4)
-				set_rds_ecc(num);
-			else if(num == 0)
-				/* we wouldn't be able to disable it */
-				set_rds_ecc(0);
+			set_rds_ecc(strtoul((char *)arg, NULL, 16));
+			return;
+		}
+		if (CMD_MATCHES("LIC")) {
+			arg[2] = 0;
+			set_rds_lic(strtoul((char *)arg, NULL, 16));
 			return;
 		}
 
@@ -326,6 +326,11 @@ void process_ascii_cmd(unsigned char *str) {
 			#else
 			set_carrier_volume(1, val);
 			#endif
+			return;
+		}
+
+		if (CMD_MATCHES("ECCEN")) {
+			set_rds_ecclic_toggle(arg[0]);
 			return;
 		}
 	}
