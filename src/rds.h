@@ -82,6 +82,12 @@ typedef struct rds_params_t {
 	/* Long PS */
 	unsigned char lps[LPS_LENGTH];
 
+	/* PIN */
+	uint8_t pin_enabled;
+	uint8_t pin_day;
+	uint8_t pin_hour;
+	uint8_t pin_minute;
+
 	#ifdef RDS2
 	/* RDS2 image path*/
 	char rds2_image_path[51];
@@ -288,6 +294,8 @@ extern void exit_rds_encoder();
 extern void get_rds_bits(uint8_t *bits);
 extern void set_rds_pi(uint16_t pi_code);
 extern void set_rds_ecc(uint8_t ecc);
+extern void set_rds_pin_enabled(uint8_t enabled);
+extern void set_rds_pin(uint8_t day, uint8_t hour, uint8_t minute);
 extern void set_rds_rt_ab(uint8_t ab);
 extern void set_rds_rt(unsigned char *rt);
 extern void set_rds_ps(unsigned char *ps);
@@ -312,8 +320,6 @@ extern float get_rds_sample(uint8_t stream_num, uint8_t rds2tunneling);
 extern float get_rds_sample(uint8_t stream_num);
 #endif
 extern uint16_t get_rds_pi();
-#ifdef CGG
 extern void set_rds_cg(uint16_t* blocks);
-#endif
 
 #endif /* RDS_H */

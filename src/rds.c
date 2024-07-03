@@ -43,10 +43,8 @@ static struct {
 	uint8_t lps_update;
 	uint8_t lps_segments;
 
-	#ifdef CGG
 	uint8_t custom_group_in;
 	uint16_t custom_group[GROUP_LENGTH];
-	#endif
 } rds_state;
 
 #ifdef ODA
@@ -281,32 +279,22 @@ static void get_rds_lps_group(uint16_t *blocks) {
 	if (lps_state == rds_state.lps_segments) lps_state = 0;
 }
 
-/* 1A: i fucking added this 2 days ago and yesterday it was oficially implemented, i did tell anthony a idea 😭💀*/
 static void get_rds_ecc_group(uint16_t *blocks) {
 	blocks[1] |= 1 << 12;
 	blocks[2] = rds_data.ecc;
-	/*
-	PIN: i'd implement this but i have no reason to
-	blocks[3] = rds_data.pin_day << 11
-	blocks[3] |= rds_data.pin_hour << 6
-	blocks[3] |= rds_data.pin_minute
-	*/
-}
 
-#if 0
-/* too lazy to do it now*/
-static void get_rds_lic_group(uint16_t *blocks) {
-	blocks[1] |= 1 << 12;
-	blocks[2] = (rds_data.lic | 0x3000);
+	if(rds_data.pin_enabled) {
+		blocks[3] = rds_data.pin_day << 11; /* first 5 bits */
+		blocks[3] |= rds_data.pin_hour << 6; /* 5-10 bits from start */
+		blocks[3] |= rds_data.pin_minute; /* 10-16 bits from start */
+	}
 }
-#endif
 
 /* RT+ */
 #ifdef ODA_RTP
 static void init_rtplus(uint8_t group) {
 	register_oda(group, ODA_AID_RTPLUS, 0);
 	rtplus_cfg.group = group;
-	rtplus_cfg.toggle = 1;
 	rtplus_cfg.enabled = 1;
 }
 #endif
@@ -418,7 +406,6 @@ group_coded:
 	return 1;
 }
 
-#ifdef CGG
 /* Get a custom group if there is one*/
 static uint8_t get_rds_custom_groups(uint16_t *blocks) {
 	if(rds_state.custom_group_in) {
@@ -431,7 +418,6 @@ static uint8_t get_rds_custom_groups(uint16_t *blocks) {
 	}
 	return 0;
 }
-#endif
 
 /* Creates an RDS group.
  * This generates sequences of the form 0A, 2A, 0A, 2A, 0A, 2A, etc.
@@ -453,11 +439,10 @@ static void get_rds_group(uint16_t *blocks) {
 		goto group_coded;
 	}
 
-#ifdef CGG
+	/* Next to top priority, if want top then just disable CT i guess */
 	if(get_rds_custom_groups(blocks)) {
 		goto group_coded;
 	}
-#endif
 
 	/* Longer text groups get medium priority */
 	if (get_rds_long_text_groups(blocks)) {
@@ -547,6 +532,16 @@ void set_rds_pi(uint16_t pi_code) {
 
 void set_rds_ecc(uint8_t ecc) {
 	rds_data.ecc = ecc;
+}
+
+void set_rds_pin_enabled(uint8_t enabled) {
+	rds_data.pin_enabled = enabled & INT8_0;
+}
+
+void set_rds_pin(uint8_t day, uint8_t hour, uint8_t minute) {
+	rds_data.pin_day = (day & INT8_L5);
+	rds_data.pin_hour = (hour & INT8_L5);
+	rds_data.pin_minute = (minute & INT8_L6);
 }
 
 void set_rds_rt_ab(uint8_t ab) {
@@ -696,7 +691,6 @@ uint16_t get_rds_pi() {
 	return rds_data.pi;
 }
 
-#ifdef CGG
 void set_rds_cg(uint16_t* blocks) {
 	rds_state.custom_group[0] = blocks[0];
 	rds_state.custom_group[1] = blocks[1];
@@ -704,4 +698,3 @@ void set_rds_cg(uint16_t* blocks) {
 	rds_state.custom_group[3] = blocks[3];
 	rds_state.custom_group_in = 1;
 }
-#endif

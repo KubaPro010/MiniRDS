@@ -39,7 +39,6 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[2] = 0;
 		arg = str + 3;
 
-		#ifdef CGG
 		if (CMD_MATCHES("CG")) {
 			/* this stays*/
 			uint16_t blocks[4];
@@ -52,7 +51,6 @@ void process_ascii_cmd(unsigned char *str) {
 			}
 			return;
 		}
-		#endif
 		if (CMD_MATCHES("AF")) {
 			/* TODO: Convert to ASCII format (https://pira.cz/rds/p164man.pdf page 38)*/
 			/* TODO: Add AFCH*/
@@ -166,7 +164,7 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("ECC")) {
 			arg[2] = 0;
 			unsigned long num = strtoul((char *)arg, NULL, 16);
-			if (num >= 0xD0 && num <= 0xF4)
+			if (num >= 0xA0 && num <= 0xF4)
 				set_rds_ecc(num);
 			else if(num == 0)
 				/* we wouldn't be able to disable it */
@@ -196,6 +194,15 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("LPS")) {
 			arg[LPS_LENGTH] = 0;
 			set_rds_lps(arg);
+			return;
+		}
+
+		if (CMD_MATCHES("PIN")) {
+			uint8_t pin[3];
+			if (sscanf((char *)arg, "%hhu,%hhu,%hhu",
+				&pin[0], &pin[1], &pin[2]) == 3) {
+					set_rds_pin
+			}
 			return;
 		}
 	}
@@ -231,7 +238,6 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 	}
-	#ifdef CGG
 	if (cmd_len > 2 && str[1] == '=') {
 		cmd = str;
 		cmd[1] = 0;
@@ -252,7 +258,35 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 	}
-	#endif
+	if (cmd_len > 6 && str[5] == '=') {
+		cmd = str;
+		cmd[5] = 0;
+		arg = str + 6;
+
+		if (CMD_MATCHES("PINEN")) {
+			arg[1] = 0;
+			set_rdsgen(strtoul((char *)arg, NULL, 10));
+			return;
+		}
+	}
+
+	if (cmd_len > 6 && str[5] == '=') {
+		cmd = str;
+		cmd[5] = 0;
+		arg = str + 6;
+		if (CMD_MATCHES("LEVEL")) {
+			uint8_t val = strtoul((char *)arg, NULL, 10);
+			val /= 255;
+			val *= 15; /* max value*/
+			#ifdef RDS2
+			set_carrier_volume(1, val);
+			set_carrier_volume(2, val);
+			#else
+			set_carrier_volume(1, val);
+			#endif
+			return;
+		}
+	}
 	if (cmd_len > 7 && str[6] == '=') {
 		cmd = str;
 		cmd[6] = 0;
