@@ -125,12 +125,6 @@ void process_ascii_cmd(unsigned char *str) {
 			set_output_volume(strtof((char *)arg, NULL));
 			return;
 		}
-		if (CMD_MATCHES("LPS")) {
-			arg[LPS_LENGTH] = 0;
-			if (arg[0] == '-') arg[0] = 0;
-			set_rds_lps(arg);
-			return;
-		}
 	}
 
 	if (cmd_len > 5 && str[4] == '=') {
@@ -199,6 +193,11 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 		#endif
 
+		if (CMD_MATCHES("LPS")) {
+			arg[LPS_LENGTH] = 0;
+			set_rds_lps(arg);
+			return;
+		}
 	}
 	if (cmd_len > 3 && str[2] == '=') {
 		cmd = str;
