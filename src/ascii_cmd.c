@@ -123,6 +123,13 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 	}
 
+	if(cmd_len == 5) {
+		cmd = str;
+		if(CMD_MATCHES("AFCH=")) {
+			clear_rds_af();
+			return;
+		}
+	}
 	if (cmd_len > 5 && str[4] == '=') {
 		/* compatibilty with existing (standarts)*/
 		cmd = str;
@@ -142,18 +149,26 @@ void process_ascii_cmd(unsigned char *str) {
 			if(arg[0] == 'A' || arg[0] == 'B') {
 				return;
 			}
-			uint8_t afs[MAX_AFS]; /* max val is 0xcc which is under a byte */
-			uint8_t *af_iter;
-			uint8_t count = sscanf((const char*)arg, "%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX", /* 25 */
-							&afs[0], &afs[1], &afs[2], &afs[3], &afs[4], &afs[5], &afs[6], &afs[7], &afs[8], &afs[9], &afs[10],
-							&afs[11], &afs[12], &afs[13], &afs[14], &afs[15], &afs[16], &afs[17], &afs[18], &afs[19], &afs[20],
-							&afs[21], &afs[22], &afs[23], &afs[24]);
+			clear_rds_af();
+			uint8_t arg_count;
 			rds_af_t new_af;
-			af_iter = afs;
+			float af[MAX_AFS], *af_iter;
+			arg_count = sscanf((char *)arg,
+				"%hhx,%hhx,%hhx,%hhx,%hhx," /* AF list */
+				"%hhx,%hhx,%hhx,%hhx,%hhx,"
+				"%hhx,%hhx,%hhx,%hhx,%hhx,"
+				"%hhx,%hhx,%hhx,%hhx,%hhx,"
+				"%hhx,%hhx,%hhx,%hhx,%hhx",
+			&af[0],  &af[1],  &af[2],  &af[3],  &af[4],
+			&af[5],  &af[6],  &af[7],  &af[8],  &af[9],
+			&af[10], &af[11], &af[12], &af[13], &af[14],
+			&af[15], &af[16], &af[17], &af[18], &af[19],
+			&af[20], &af[21], &af[22], &af[23], &af[24]);
+			af_iter = af;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
-			while ((count-- - 1) != 0) {
-				float freq = (875 + *af_iter++) / 10.0;
-            	add_rds_af(&new_af, freq);
+			while (arg_count-- != 0) {
+				float freq = (875+*af_iter++) / 10
+				add_rds_af(&new_af, freq);
 			}
 			set_rds_af(new_af);
 			return;
