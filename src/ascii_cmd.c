@@ -272,6 +272,7 @@ void process_ascii_cmd(unsigned char *str) {
 			&af[10], &af[11], &af[12], &af[13], &af[14],
 			&af[15], &af[16], &af[17], &af[18], &af[19],
 			&af[20], &af[21], &af[22], &af[23], &af[24]);
+			clear_rds_af();
 			af_iter = af;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
 			while (arg_count-- != 0) {
