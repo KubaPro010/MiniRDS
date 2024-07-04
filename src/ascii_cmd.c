@@ -225,6 +225,7 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 	}
 	if(cmd_len == 3) {
+		cmd = str;
 		if(CMD_MATCHES("AF=")) {
 			clear_rds_af();
 			return;
