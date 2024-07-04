@@ -152,13 +152,13 @@ void process_ascii_cmd(unsigned char *str) {
 			clear_rds_af();
 			uint8_t arg_count;
 			rds_af_t new_af;
-			int af[MAX_AFS], *af_iter;
+			uint8_t af[MAX_AFS], *af_iter;
 			arg_count = sscanf((char *)arg,
-				"%x,%x,%x,%x,%x," /* AF list */
-				"%x,%x,%x,%x,%x,"
-				"%x,%x,%x,%x,%x,"
-				"%x,%x,%x,%x,%x,"
-				"%x,%x,%x,%x,%x",
+				"%hhx,%hhx,%hhx,%hhx,%hhx," /* AF list */
+				"%hhx,%hhx,%hhx,%hhx,%hhx,"
+				"%hhx,%hhx,%hhx,%hhx,%hhx,"
+				"%hhx,%hhx,%hhx,%hhx,%hhx,"
+				"%hhx,%hhx,%hhx,%hhx,%hhx",
 			&af[0],  &af[1],  &af[2],  &af[3],  &af[4],
 			&af[5],  &af[6],  &af[7],  &af[8],  &af[9],
 			&af[10], &af[11], &af[12], &af[13], &af[14],
@@ -167,10 +167,7 @@ void process_ascii_cmd(unsigned char *str) {
 			af_iter = af;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
 			while (arg_count-- != 0) {
-				int raw_freq = *af_iter++;
-				float freq = (875+raw_freq) / 10;
-				printf("%f %d\n", freq, raw_freq);
-				add_rds_af(&new_af, freq);
+				add_rds_af(&new_af, (875+*af_iter++) / 10);
 			}
 			set_rds_af(new_af);
 			return;
