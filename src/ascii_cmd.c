@@ -168,6 +168,7 @@ void process_ascii_cmd(unsigned char *str) {
 			memset(&new_af, 0, sizeof(struct rds_af_t));
 			while (arg_count-- != 0) {
 				float freq = ((875+*af_iter++)+1) / 10; /* why do i need to add +1 ?????*/
+				printf("%f\n", freq);
 				add_rds_af(&new_af, freq);
 			}
 			set_rds_af(new_af);
