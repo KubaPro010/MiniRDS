@@ -280,6 +280,7 @@ void process_ascii_cmd(unsigned char *str) {
 			while ((arg_count-- - 1) != 0) {
 				add_rds_af(&new_af, *af_iter++);
 			}
+			return;
 		}
 	}
 	if (cmd_len > 2 && str[1] == '=') {
