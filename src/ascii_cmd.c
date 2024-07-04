@@ -154,11 +154,11 @@ void process_ascii_cmd(unsigned char *str) {
 			rds_af_t new_af;
 			int af[MAX_AFS], *af_iter;
 			arg_count = sscanf((char *)arg,
-				"%hhx,%hhx,%hhx,%hhx,%hhx," /* AF list */
-				"%hhx,%hhx,%hhx,%hhx,%hhx,"
-				"%hhx,%hhx,%hhx,%hhx,%hhx,"
-				"%hhx,%hhx,%hhx,%hhx,%hhx,"
-				"%hhx,%hhx,%hhx,%hhx,%hhx",
+				"%x,%x,%x,%x,%x," /* AF list */
+				"%x,%x,%x,%x,%x,"
+				"%x,%x,%x,%x,%x,"
+				"%x,%x,%x,%x,%x,"
+				"%x,%x,%x,%x,%x",
 			&af[0],  &af[1],  &af[2],  &af[3],  &af[4],
 			&af[5],  &af[6],  &af[7],  &af[8],  &af[9],
 			&af[10], &af[11], &af[12], &af[13], &af[14],
