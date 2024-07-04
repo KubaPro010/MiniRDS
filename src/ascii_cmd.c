@@ -224,6 +224,12 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 	}
+	if(cmd_len == 3) {
+		if(CMD_MATCHES("AF=")) {
+			clear_rds_af();
+			return;
+		}
+	}
 	if (cmd_len > 3 && str[2] == '=') {
 		cmd = str;
 		cmd[2] = 0;
@@ -261,11 +267,6 @@ void process_ascii_cmd(unsigned char *str) {
 				return;
 			}
 			clear_rds_af();
-			if(arg[0] == 0) {
-				printf("null\n");
-				return;
-			}
-
 			uint8_t arg_count;
 			rds_af_t new_af;
 			float af[MAX_AFS], *af_iter;
