@@ -169,14 +169,14 @@ void process_ascii_cmd(unsigned char *str) {
 			memset(&new_af, 0, sizeof(struct rds_af_t));
 			while (arg_count-- != 0) {
 				uint8_t current_value = *af_iter;
-				int frequency = (875.0 + current_value) / 10.0;
-				printf("Adding AF: 0x%02x as frequency: %d\n", current_value, frequency);
+				float frequency = (875.0 + current_value) / 10.0;
+				printf("Adding AF: 0x%02x as frequency: %f\n", current_value, frequency);
 				add_rds_af(&new_af, frequency);
 				af_iter++;
 			}
 			set_rds_af(new_af);
 			return;
-	}
+		}
 	}
 	if (cmd_len > 4 && str[3] == '=') {
 		cmd = str;
