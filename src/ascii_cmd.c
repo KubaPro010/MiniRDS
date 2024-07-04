@@ -148,7 +148,6 @@ void process_ascii_cmd(unsigned char *str) {
 							&afs[0], &afs[1], &afs[2], &afs[3], &afs[4], &afs[5], &afs[6], &afs[7], &afs[8], &afs[9], &afs[10],
 							&afs[11], &afs[12], &afs[13], &afs[14], &afs[15], &afs[16], &afs[17], &afs[18], &afs[19], &afs[20],
 							&afs[21], &afs[22], &afs[23], &afs[24]);
-			clear_rds_af();
 			rds_af_t new_af;
 			af_iter = afs;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
@@ -267,7 +266,6 @@ void process_ascii_cmd(unsigned char *str) {
 							&afs[0], &afs[1], &afs[2], &afs[3], &afs[4], &afs[5], &afs[6], &afs[7], &afs[8], &afs[9], &afs[10],
 							&afs[11], &afs[12], &afs[13], &afs[14], &afs[15], &afs[16], &afs[17], &afs[18], &afs[19], &afs[20],
 							&afs[21], &afs[22], &afs[23], &afs[24]);
-			clear_rds_af();
 			rds_af_t new_af;
 			af_iter = afs;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
