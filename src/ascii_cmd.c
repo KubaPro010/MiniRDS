@@ -261,7 +261,7 @@ void process_ascii_cmd(unsigned char *str) {
 				return;
 			}
 			clear_rds_af();
-			print("%d\n", (int)arg[0])
+			print("%d\n", (int)arg[0]);
 			if(arg[0] == 0) return;
 
 			uint8_t arg_count;
