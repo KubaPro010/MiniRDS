@@ -4,11 +4,6 @@ Most commands are in the ASCII format, for RT you can use `TEXT` or `RT1`, howev
 
 ### Commands
 
-#### `LPS`
-Enable Long PS, set to '-' to disable
-
-`LPS -`
-
 #### `MPX`
 Set volumes in percent modulation for individual MPX subcarrier signals.
 
@@ -25,3 +20,6 @@ RDS 2 (76 khz)
 Set the output volume in percent.
 
 `VOL 100`
+
+## Other
+See src/supported_cmds.txt

@@ -77,7 +77,7 @@ static struct {
 #ifdef ODA
 static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
 
-	if (oda_state.count == MAX_ODAS) return; /* can't accept more ODAs */
+	if (oda_state.count >= MAX_ODAS) return; /* can't accept more ODAs */
 
 	odas[oda_state.count].group = group;
 	odas[oda_state.count].aid = aid;

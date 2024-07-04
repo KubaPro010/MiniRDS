@@ -59,31 +59,34 @@ typedef struct rds_af_t {
 #define AF_CODE_LFMF_FOLLOWS	250
 
 typedef struct rds_params_t {
-	uint16_t pi;
-	uint16_t lic; /* lic should have 12 bits*/
-	uint8_t ecc;
-	uint8_t ta;
-	uint8_t pty;
-	uint8_t tp;
-	uint8_t ms;
-	uint8_t di;
-	/* PS */
+	uint16_t pi; /*Program Identification*/
+	uint16_t lic; /* Language Identification code. lic should have 12 bits, 16 is the closest */
+	uint8_t ecc; /* Extended Country Code*/
+	uint8_t ta; /* Traffic Annoucement*/
+	uint8_t pty; /* Program Type */
+	uint8_t tp; /* Traffic Program */
+	uint8_t ms; /* Music/Speech */
+	uint8_t di; /* Decoder ID */
+
+	/* Program Service */
 	unsigned char ps[PS_LENGTH];
-	/* RT */
+
+	/* Radio Text */
 	unsigned char rt[RT_LENGTH];
-	/* PTYN */
+
+	/* Program Type Name */
 	unsigned char ptyn[PTYN_LENGTH];
 
-	/* AF */
+	/* Alternative Frequencies */
 	struct rds_af_t af;
 
-	/* CT */
+	/* Clock-time */
 	uint8_t ct;
 
 	/* Long PS */
 	unsigned char lps[LPS_LENGTH];
 
-	/* PIN */
+	/* Program Item Number */
 	uint8_t pin_day;
 	uint8_t pin_hour;
 	uint8_t pin_minute;

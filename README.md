@@ -27,6 +27,7 @@ Note that some missing groups were added from [librds](https://flerken.zapto.org
 - Better Group Sequence (original had 0A 2A but here it is 0A 0A 0A 0A 2A 2A 2A 2A (2A) so PS appear instantly and RT is fast)
 - Added LIC and PIN
 - Most commands are compatible with the ASCII format that pira.cz uses
+- Custom groups (use `G=????????????` or `CG ???? ???? ???? ????`)
 
 ## Build
 For Debian-like distros: `sudo apt-get install libao-dev libsamplerate0-dev` to install deps.

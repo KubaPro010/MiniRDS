@@ -1,5 +1,5 @@
-AF - Not tested
-AFCH - Not tested
+AF - Mode A only
+AFCH - Mode A only
 DI
 MS
 PI
