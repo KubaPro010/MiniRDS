@@ -257,12 +257,14 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 
 		if (CMD_MATCHES("AF")) {
-			printf("%d\n", (int)arg[0]);
 			if(arg[0] == 'A' || arg[0] == 'B') {
 				return;
 			}
 			clear_rds_af();
-			if(arg[0] == 0) return;
+			if(arg[0] == 0) {
+				printf("null\n");
+				return;
+			}
 
 			uint8_t arg_count;
 			rds_af_t new_af;
