@@ -255,17 +255,13 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_pi(strtoul((char *)arg, NULL, 16));
 			return;
 		}
-	}
-	if (cmd_len > 2 && str[2] == '=') {
-		cmd = str;
-		cmd[2] = 0;
-		arg = str + 3;
+
 		if (CMD_MATCHES("AF")) {
+			printf("%d\n", (int)arg[0]);
 			if(arg[0] == 'A' || arg[0] == 'B') {
 				return;
 			}
 			clear_rds_af();
-			printf("%d\n", (int)arg[0]);
 			if(arg[0] == 0) return;
 
 			uint8_t arg_count;
