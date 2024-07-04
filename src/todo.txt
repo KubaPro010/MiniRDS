@@ -9,15 +9,16 @@ ASCII commands to implement:
 - Short RT
 
 ASCII Group seqeunce:
-0 - Four 0As
-1 - 1A
-2 - 2A
-A - 10A
-E - 14A 14B
-X - UDG1
-Y - UDG2
-R - RT+ 3A 11A
-F - 15A
+0 - Four 0As (PS x 4)
+1 - 1A (ECC/LIC, PIN)
+2 - 2A (RT)
+A - 10A (PTYN)
+E - 14A 14B (EON, yet to implement)
+X - UDG1 (yet to implement, max 8 groups per udg)
+Y - UDG2 (yet to implement)
+R - RT+ 3A 11A (do i switch between them like ecc lic?)
+F - 15A (LPS)
+Max 24 items in a sequence
 
 Note that most of this is takes out of pira.cz's P164 RDS Encoder's manual: https://pira.cz/rds/p164man.pdf
 

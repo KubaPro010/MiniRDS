@@ -52,8 +52,6 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 		if (CMD_MATCHES("AF")) {
-			/* TODO: Convert to ASCII format (https://pira.cz/rds/p164man.pdf page 38 or https://pira.cz/rds/manual.pdf page 27)*/
-			/* TODO: Add AFCH*/
 			uint8_t arg_count;
 			rds_af_t new_af;
 			char af_cmd;
@@ -138,6 +136,28 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("PTYN")) {
 			arg[PTYN_LENGTH] = 0;
 			set_rds_ptyn(xlat(arg));
+			return;
+		}
+		if (CMD_MATCHES("AFCH")) {
+			if(arg == 'A' || arg == 'B') {
+				return;
+			}
+			uint8_t arg_count;
+			uint8_t afs[MAX_AFS]; /* max val is 0xcc which is under a byte */
+			float *af_iter;
+			int count = sscanf((const char*)arg, "%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX", /* 25 */
+							&afs[0], &afs[1], &afs[2], &afs[3], &afs[4], &afs[5], &afs[6], &afs[7], &afs[8], &afs[9], &afs[10],
+							&afs[11], &afs[12], &afs[13], &afs[14], &afs[15], &afs[16], &afs[17], &afs[18], &afs[19], &afs[20],
+							&afs[21], &afs[22], &afs[23], &afs[24]);
+			clear_rds_af();
+			rds_af_t new_af;
+			af_iter = afs;
+			memset(&new_af, 0, sizeof(struct rds_af_t));
+			while ((arg_count-- - 1) != 0) {
+				float freq = (875 + *af_iter++) / 10.0;
+            	add_rds_af(&new_af, freq);
+			}
+			set_rds_af(new_af);
 			return;
 		}
 	}
@@ -235,6 +255,28 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("PI")) {
 			arg[4] = 0;
 			set_rds_pi(strtoul((char *)arg, NULL, 16));
+			return;
+		}
+
+		if (CMD_MATCHES("AF")) {
+			if(arg == 'A' || arg == 'B') {
+				return;
+			}
+			uint8_t arg_count;
+			float afs[MAX_AFS];
+			float *af_iter;
+			int count = sscanf((const char*)arg, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", /* 25 */
+							&afs[0], &afs[1], &afs[2], &afs[3], &afs[4], &afs[5], &afs[6], &afs[7], &afs[8], &afs[9], &afs[10],
+							&afs[11], &afs[12], &afs[13], &afs[14], &afs[15], &afs[16], &afs[17], &afs[18], &afs[19], &afs[20],
+							&afs[21], &afs[22], &afs[23], &afs[24]);
+			clear_rds_af();
+			rds_af_t new_af;
+			af_iter = afs;
+			memset(&new_af, 0, sizeof(struct rds_af_t));
+			while ((arg_count-- - 1) != 0) {
+            	add_rds_af(&new_af, *af_iter++);
+			}
+			set_rds_af(new_af);
 			return;
 		}
 	}

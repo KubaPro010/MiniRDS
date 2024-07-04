@@ -1,0 +1,23 @@
+AF - Not tested
+AFCH - Not tested
+DI
+MS
+PI
+PS
+PTY
+PTYN
+PTYNEN
+TEXT | RT1 | RT2
+TA
+TP
+CT
+LEVEL - Not redecommended, if possible use `MPX`
+RDSGEN
+ECC
+ECCEN
+G
+LIC
+PIN
+PINEN
+RTP
+RTPRUN

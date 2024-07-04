@@ -114,6 +114,8 @@ MiniRDS has a working implementation of the RFT protocol in RDS2. Please edit th
 public domain](http://downloads.dxing.si/download.php?file=ISO%20Stamdards/RDS/latest%20(includes%20RDS2)/iec-62106-6-2018.pdf)
 - [P232 RDS Encoder
 Technical Manual](https://pira.cz/rds/p232man.pdf)
+- [PIRA32 RDS Encoder
+Technical Manual](https://pira.cz/rds/manual.pdf)
 
 ## Credits
 Note that this is a fork of [Anthony96922](https://github.com/Anthony96922)'s [MiniRDS](https://github.com/Anthony96922/MiniRDS)
