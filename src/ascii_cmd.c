@@ -152,7 +152,7 @@ void process_ascii_cmd(unsigned char *str) {
 			clear_rds_af();
 			uint8_t arg_count;
 			rds_af_t new_af;
-			float af[MAX_AFS], *af_iter;
+			uint8_t af[MAX_AFS], *af_iter;
 			arg_count = sscanf((char *)arg,
 				"%hhx,%hhx,%hhx,%hhx,%hhx," /* AF list */
 				"%hhx,%hhx,%hhx,%hhx,%hhx,"
