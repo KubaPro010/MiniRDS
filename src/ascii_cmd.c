@@ -200,12 +200,6 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_rt(xlat(arg));
 			return;
 		}
-		if (CMD_MATCHES("RT2")) {
-			/* alias for RT1 incase program sends RT2 */
-			arg[RT_LENGTH * 2] = 0;
-			set_rds_rt(xlat(arg));
-			return;
-		}
 		if (CMD_MATCHES("PTY")) {
 			arg[2] = 0;
 			set_rds_pty(strtoul((char *)arg, NULL, 10));

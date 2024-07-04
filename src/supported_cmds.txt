@@ -4,10 +4,11 @@ DI
 MS
 PI
 PS
+TPS
 PTY
 PTYN
 PTYNEN
-TEXT | RT1 | RT2
+TEXT | RT1
 TA
 TP
 CT
@@ -21,3 +22,5 @@ PIN
 PINEN
 RTP
 RTPRUN
+
+(Magic RDS 3 'Program' page is fully supported)

@@ -36,6 +36,7 @@ static struct {
 	uint8_t ps_update;
 	uint8_t tps_update;
 
+	uint8_t rt1_enabled;
 	uint8_t rt_update;
 	uint8_t rt_ab;
 	uint8_t rt_segments;
@@ -167,7 +168,7 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
 		rt_state = 0; /* rewind when new RT arrives */
 	}
 
-	if(rt_text[0] == '\r') {
+	if(rt_text[0] == '\r' && !rds_state.rt1_enabled) {
 		/* RT strings lesser than 64 in size should have been ended with a \r if a return is on [0] then that means that our string is empty and thus we can not generate this group*/
 		return 0;
 	}
@@ -602,6 +603,9 @@ void set_rds_rt_ab(uint8_t ab) {
 	rds_state.rt_ab = ab & INT8_0;
 }
 
+void set_rds_rt1_enabled(uint8_t rt1en) {
+	rds_state.rt1_enabled = rt1en & INT8_0;
+}
 void set_rds_rt(unsigned char *rt) {
 	uint8_t i = 0, len = 0;
 
