@@ -167,7 +167,7 @@ void process_ascii_cmd(unsigned char *str) {
 			af_iter = af;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
 			while (arg_count-- != 0) {
-				float freq = (875+*af_iter++) / 10
+				float freq = (875+*af_iter++) / 10;
 				add_rds_af(&new_af, freq);
 			}
 			set_rds_af(new_af);
