@@ -139,13 +139,12 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 		if (CMD_MATCHES("AFCH")) {
-			if(arg == 'A' || arg == 'B') {
+			if(arg[0] == 'A' || arg[0] == 'B') {
 				return;
 			}
-			uint8_t arg_count;
 			uint8_t afs[MAX_AFS]; /* max val is 0xcc which is under a byte */
-			float *af_iter;
-			int count = sscanf((const char*)arg, "%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX", /* 25 */
+			uint8_t *af_iter;
+			uint8_t count = sscanf((const char*)arg, "%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX", /* 25 */
 							&afs[0], &afs[1], &afs[2], &afs[3], &afs[4], &afs[5], &afs[6], &afs[7], &afs[8], &afs[9], &afs[10],
 							&afs[11], &afs[12], &afs[13], &afs[14], &afs[15], &afs[16], &afs[17], &afs[18], &afs[19], &afs[20],
 							&afs[21], &afs[22], &afs[23], &afs[24]);
@@ -153,7 +152,7 @@ void process_ascii_cmd(unsigned char *str) {
 			rds_af_t new_af;
 			af_iter = afs;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
-			while ((arg_count-- - 1) != 0) {
+			while ((count-- - 1) != 0) {
 				float freq = (875 + *af_iter++) / 10.0;
             	add_rds_af(&new_af, freq);
 			}
@@ -259,13 +258,12 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 
 		if (CMD_MATCHES("AF")) {
-			if(arg == 'A' || arg == 'B') {
+			if(arg[0] == 'A' || arg[0] == 'B') {
 				return;
 			}
-			uint8_t arg_count;
 			float afs[MAX_AFS];
 			float *af_iter;
-			int count = sscanf((const char*)arg, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", /* 25 */
+			uint8_t count = sscanf((const char*)arg, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", /* 25 */
 							&afs[0], &afs[1], &afs[2], &afs[3], &afs[4], &afs[5], &afs[6], &afs[7], &afs[8], &afs[9], &afs[10],
 							&afs[11], &afs[12], &afs[13], &afs[14], &afs[15], &afs[16], &afs[17], &afs[18], &afs[19], &afs[20],
 							&afs[21], &afs[22], &afs[23], &afs[24]);
@@ -273,7 +271,7 @@ void process_ascii_cmd(unsigned char *str) {
 			rds_af_t new_af;
 			af_iter = afs;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
-			while ((arg_count-- - 1) != 0) {
+			while ((count-- - 1) != 0) {
             	add_rds_af(&new_af, *af_iter++);
 			}
 			set_rds_af(new_af);
