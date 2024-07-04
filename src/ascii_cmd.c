@@ -275,6 +275,7 @@ void process_ascii_cmd(unsigned char *str) {
 			af_iter = af;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
 			while ((arg_count-- - 1) != 0) {
+				printf("adding\n");
 				add_rds_af(&new_af, *af_iter++);
 			}
 			set_rds_af(new_af);
