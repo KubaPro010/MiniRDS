@@ -262,16 +262,17 @@ void process_ascii_cmd(unsigned char *str) {
 			float af[MAX_AFS], *af_iter;
 
 			arg_count = sscanf((char *)arg,
-				"%f %f %f %f %f " /* AF list */
-				"%f %f %f %f %f "
-				"%f %f %f %f %f "
-				"%f %f %f %f %f "
-				"%f %f %f %f %f",
+				"%f,%f,%f,%f,%f " /* AF list */
+				"%f,%f,%f,%f,%f "
+				"%f,%f,%f,%f,%f "
+				"%f,%f,%f,%f,%f "
+				"%f,%f,%f,%f,%f",
 			&af[0],  &af[1],  &af[2],  &af[3],  &af[4],
 			&af[5],  &af[6],  &af[7],  &af[8],  &af[9],
 			&af[10], &af[11], &af[12], &af[13], &af[14],
 			&af[15], &af[16], &af[17], &af[18], &af[19],
 			&af[20], &af[21], &af[22], &af[23], &af[24]);
+			printf("%d", arg_count);
 			af_iter = af;
 			memset(&new_af, 0, sizeof(struct rds_af_t));
 			while ((arg_count-- - 1) != 0) {
@@ -280,6 +281,7 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 	}
+
 	if (cmd_len > 2 && str[1] == '=') {
 		cmd = str;
 		cmd[1] = 0;
