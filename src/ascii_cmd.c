@@ -177,10 +177,24 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 	}
+
+	if(cmd_len == 4) {
+		cmd = str;
+		if(CMD_MATCHES("TPS=")) {
+			set_rds_tpson(0);
+			return;
+		}
+	}
 	if (cmd_len > 4 && str[3] == '=') {
 		cmd = str;
 		cmd[3] = 0;
 		arg = str + 4;
+		if (CMD_MATCHES("TPS")) {
+			arg[PS_LENGTH * 2] = 0;
+			set_rds_tps(xlat(arg));
+			set_rds_tpson(1);
+			return;
+		}
 		if (CMD_MATCHES("RT1")) {
 			arg[RT_LENGTH * 2] = 0;
 			set_rds_rt(xlat(arg));
@@ -254,6 +268,11 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd[2] = 0;
 		arg = str + 3;
 
+		if (CMD_MATCHES("PS")) {
+			arg[PS_LENGTH * 2] = 0;
+			set_rds_ps(xlat(arg));
+			return;
+		}
 		if (CMD_MATCHES("CT")) {
 			set_rds_ct(arg[0]);
 			return;

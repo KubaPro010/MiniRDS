@@ -34,6 +34,7 @@ static struct {
 	uint8_t pin_enabled;
 
 	uint8_t ps_update;
+	uint8_t tps_update;
 
 	uint8_t rt_update;
 	uint8_t rt_ab;
@@ -116,11 +117,16 @@ static uint16_t get_next_af() {
 /* PS group (0A) */
 static void get_rds_ps_group(uint16_t *blocks) {
 	static unsigned char ps_text[PS_LENGTH];
+	static unsigned char tps_text[PS_LENGTH];
 	static uint8_t ps_state;
 
 	if (ps_state == 0 && rds_state.ps_update) {
 		memcpy(ps_text, rds_data.ps, PS_LENGTH);
 		rds_state.ps_update = 0; /* rewind */
+	}
+	if(ps_state == 0 && rds_state.tps_update) {
+		memcpy(tps_text, rds_data.tps, PS_LENGTH);
+		rds_state.tps_update = 0; /* rewind */
 	}
 
 	/* TA */
@@ -139,7 +145,11 @@ static void get_rds_ps_group(uint16_t *blocks) {
 	blocks[2] = get_next_af();
 
 	/* PS */
-	blocks[3] = ps_text[ps_state * 2] << 8 | ps_text[ps_state * 2 + 1];
+	if(rds_data.ta && rds_data.traffic_ps_on) {
+		blocks[3] = tps_text[ps_state * 2] << 8 | tps_text[ps_state * 2 + 1];
+	} else {
+		blocks[3] =  ps_text[ps_state * 2] << 8 |  ps_text[ps_state * 2 + 1];
+	}
 
 	ps_state++;
 	if (ps_state == 4) ps_state = 0;
@@ -626,6 +636,17 @@ void set_rds_ps(unsigned char *ps) {
 	memset(rds_data.ps, ' ', PS_LENGTH);
 	while (*ps != 0 && len < PS_LENGTH)
 		rds_data.ps[len++] = *ps++;
+}
+void set_rds_tpson(uint8_t tpson) {
+	rds_data.traffic_ps_on = tpson & INT8_0;
+}
+void set_rds_tps(unsigned char *tps) {
+	uint8_t len = 0;
+
+	rds_state.tps_update = 1;
+	memset(rds_data.tps, ' ', PS_LENGTH);
+	while (*tps != 0 && len < PS_LENGTH)
+		rds_data.tps[len++] = *tps++;
 }
 
 void set_rds_lps(unsigned char *lps) {
