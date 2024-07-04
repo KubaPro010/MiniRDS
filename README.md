@@ -25,7 +25,8 @@ Note that some missing groups were added from [librds](https://flerken.zapto.org
 - better arguments
 - Option to disable ODA (to not get that ODA AID thing)
 - Better Group Sequence (original had 0A 2A but here it is 0A 0A 0A 0A 2A 2A 2A 2A (2A) so PS appear instantly and RT is fast)
-- Options for Networked CTL
+- Added LIC and PIN
+- Most commands are compatible with the ASCII format that pira.cz uses
 
 ## Build
 For Debian-like distros: `sudo apt-get install libao-dev libsamplerate0-dev` to install deps.
