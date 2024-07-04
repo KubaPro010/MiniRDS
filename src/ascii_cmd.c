@@ -257,11 +257,15 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 
 		if (CMD_MATCHES("AF")) {
+			if(arg[0] == 'A' || arg[0] == 'B') {
+				return;
+			}
+			clear_rds_af();
+			if(arg[0] == 0) return;
+
 			uint8_t arg_count;
 			rds_af_t new_af;
 			float af[MAX_AFS], *af_iter;
-
-			clear_rds_af();
 			arg_count = sscanf((char *)arg,
 				"%f,%f,%f,%f,%f," /* AF list */
 				"%f,%f,%f,%f,%f,"
