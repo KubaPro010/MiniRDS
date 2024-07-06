@@ -268,7 +268,7 @@ void process_ascii_cmd(unsigned char *str) {
 		arg = str + 3;
 
 		if (CMD_MATCHES("PS")) {
-			if(arg[0] == '\0') arg[0] = ' ';
+			if(arg[0] == '\0') arg[0] = ' '; /* fix for strings that start with a space idk why */
 			arg[PS_LENGTH * 2] = 0;
 			set_rds_ps(xlat(arg));
 			return;
