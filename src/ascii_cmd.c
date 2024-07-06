@@ -265,9 +265,10 @@ void process_ascii_cmd(unsigned char *str) {
 	if (cmd_len > 3 && str[2] == '=') {
 		cmd = str;
 		cmd[2] = 0;
-		arg = str + 4;
+		arg = str + 3;
 
 		if (CMD_MATCHES("PS")) {
+			print("%d", arg[0]);
 			arg[PS_LENGTH * 2] = 0;
 			set_rds_ps(xlat(arg));
 			return;
