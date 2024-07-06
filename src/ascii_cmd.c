@@ -269,7 +269,7 @@ void process_ascii_cmd(unsigned char *str) {
 
 		if (CMD_MATCHES("PS")) {
 			arg[PS_LENGTH * 2] = 0;
-			printf("%d", arg[0]);
+			printf("%d\n", arg[0]);
 			set_rds_ps(xlat(arg));
 			return;
 		}
