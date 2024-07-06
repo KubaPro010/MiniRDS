@@ -309,6 +309,7 @@ extern void set_rds_rt(unsigned char *rt);
 extern void set_rds_ps(unsigned char *ps);
 extern void set_rds_tpson(uint8_t tpson);
 extern void set_rds_tps(unsigned char *ps);
+extern void set_rds_lpson(uint8_t lpson);
 extern void set_rds_lps(unsigned char *lps);
 #ifdef ODA_RTP
 extern void set_rds_rtplus_flags(uint8_t flags);

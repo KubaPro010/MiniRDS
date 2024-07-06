@@ -184,6 +184,10 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_tpson(0);
 			return;
 		}
+		if(CMD_MATCHES("LPS=")) {
+			set_rds_lpson(0);
+			return;
+		}
 	}
 	if (cmd_len > 4 && str[3] == '=') {
 		cmd = str;
@@ -237,6 +241,7 @@ void process_ascii_cmd(unsigned char *str) {
 
 		if (CMD_MATCHES("LPS")) {
 			arg[LPS_LENGTH] = 0;
+			set_rds_lpson(1);
 			set_rds_lps(arg);
 			return;
 		}

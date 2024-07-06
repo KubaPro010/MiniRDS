@@ -47,6 +47,7 @@ static struct {
 	uint8_t ptyn_ab;
 
 	/* Long PS */
+	uint8_t lps_on;
 	uint8_t lps_update;
 	uint8_t lps_segments;
 
@@ -434,7 +435,7 @@ static uint8_t get_rds_long_text_groups(uint16_t *blocks) {
 	case 1:
 	case 2: /* will this just replace everything with lps?*/
 	case 3: /* Long PS */
-		if (rds_data.lps[0]) {
+		if (rds_data.lps[0] && rds_state.lps_on) {
 			get_rds_lps_group(blocks);
 			goto group_coded;
 		}
@@ -651,6 +652,10 @@ void set_rds_tps(unsigned char *tps) {
 	memset(rds_data.tps, ' ', PS_LENGTH);
 	while (*tps != 0 && len < PS_LENGTH)
 		rds_data.tps[len++] = *tps++;
+}
+
+void set_rds_lpson(uint8_t lpson) {
+	rds_state.lps_on = lpson & INT8_0;
 }
 
 void set_rds_lps(unsigned char *lps) {
