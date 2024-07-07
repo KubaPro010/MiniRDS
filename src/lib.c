@@ -268,7 +268,6 @@ uint8_t add_rds_af(struct rds_af_t *af_list, float freq) {
 		af_list->afs[af_list->num_entries + 1] = af;
 		af_list->num_entries += 2;
 	} else {
-#
 		return 1;
 	}
 

@@ -28,14 +28,17 @@ static struct rds_params_t rds_data;
 
 /* RDS data controls */
 static struct {
+	/* Slow Labeling Codes */
 	uint8_t ecclic_enabled;
 	uint8_t ecc_or_lic;
-
+	/* Program Item Number */
 	uint8_t pin_enabled;
 
+	/* Program Service */
 	uint8_t ps_update;
 	uint8_t tps_update;
 
+	/* Radio Text*/
 	uint8_t rt1_enabled;
 	uint8_t rt_update;
 	uint8_t rt_ab;
@@ -212,9 +215,6 @@ static void get_rds_oda_group(uint16_t *blocks) {
 }
 #endif
 
-/* Generates a CT (clock time) group if the minute has just changed
- * Returns 1 if the CT group was generated, 0 otherwise
- */
 static uint8_t get_rds_ct_group(uint16_t *blocks) {
 	static uint8_t latest_minutes;
 	struct tm *utc, *local_time;
@@ -245,8 +245,8 @@ static uint8_t get_rds_ct_group(uint16_t *blocks) {
 
 		/* tm_gmtoff doesn't exist in POSIX but __tm_gmtoff does */
 		offset = local_time->__tm_gmtoff / (30 * 60); /*__tm_gmtoff is time in seconds from utc, so utc + __tm_gmtoff = local time*/
-		if (offset < 0) blocks[3] |= 1 << 5;
-		blocks[3] |= abs(offset);
+		if (offset < 0) blocks[3] |= 1 << 5; /* if less than 0 then set the flag*/
+		blocks[3] |= abs(offset); /* offset should be halfs of a hour, so offset 1 = 30 minutes, 2 = 1 hour*/
 
 		return 1;
 	}
@@ -266,7 +266,7 @@ static void get_rds_ptyn_group(uint16_t *blocks) {
 	}
 
 	blocks[1] |= 10 << 12 | ptyn_state;
-	blocks[1] |= rds_state.ptyn_ab << 4;
+	blocks[1] |= rds_state.ptyn_ab << 4; /* no one knew about ptyn's ab until i saw sdr++'s decoder, it had decoded ptyn but not show it? it also did decode the ab flag */
 	blocks[2] =  ptyn_text[ptyn_state * 4 + 0] << 8;
 	blocks[2] |= ptyn_text[ptyn_state * 4 + 1];
 	blocks[3] =  ptyn_text[ptyn_state * 4 + 2] << 8;
@@ -287,6 +287,7 @@ static void get_rds_lps_group(uint16_t *blocks) {
 	}
 
 	blocks[1] |= 15 << 12 | lps_state;
+	/* does lps have an ab? */
 	blocks[2] =  lps_text[lps_state * 4    ] << 8;
 	blocks[2] |= lps_text[lps_state * 4 + 1];
 	blocks[3] =  lps_text[lps_state * 4 + 2] << 8;
@@ -312,7 +313,7 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 static void get_rds_lic_group(uint16_t *blocks) {
 	blocks[1] |= 1 << 12;
 	if(rds_state.ecclic_enabled) {
-		blocks[2] = 0x3000; /* 0b0011000000000000 first 1 bit is the linkage actuator, the 3 after are variant codes which is 3 in this case */
+		blocks[2] = 0x3000; /* 0b0011000000000000 first 1 bit is the linkage actuator, the 3 after are variant codes which is 3 in this case after theres space for data */
 		blocks[2] |= rds_data.lic;
 	}
 
@@ -433,7 +434,7 @@ static uint8_t get_rds_long_text_groups(uint16_t *blocks) {
 	switch (group_selector) {
 	case 0:
 	case 1:
-	case 2: /* will this just replace everything with lps?*/
+	case 2:
 	case 3: /* Long PS */
 		if (rds_data.lps[0] && rds_state.lps_on) {
 			get_rds_lps_group(blocks);
@@ -515,7 +516,7 @@ static void get_rds_group(uint16_t *blocks) {
 	if (state >= 9) state = 0;
 
 group_coded:
-	/* for version B groups */
+	/* for version B groups. good for custom groups */
 	if (IS_TYPE_B(blocks)) {
 		blocks[2] = rds_data.pi;
 	}
@@ -583,7 +584,7 @@ void set_rds_ecc(uint8_t ecc) {
 }
 
 void set_rds_lic(uint8_t lic) {
-	rds_data.lic = lic & INT16_L12; /* lic is 12 bits */
+	rds_data.lic = lic & INT16_L12; /* lic is 12 bits according to the docs, but the values can be less, for example english is 0x09 */
 }
 
 void set_rds_ecclic_toggle(uint8_t toggle) {
@@ -762,6 +763,7 @@ void set_rds_ct(uint8_t ct) {
 }
 
 uint16_t get_rds_pi() {
+	/* this is for custom groups, specifically 'G=' */
 	return rds_data.pi;
 }
 

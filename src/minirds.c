@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
 
-	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:e:d:C:"
+	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:e:L:d:C:"
 	#ifdef RDS2
 	"I:"
 	#endif
@@ -173,6 +173,7 @@ int main(int argc, char **argv) {
 		{"ptyn",	required_argument, NULL, 'P'},
 		{"lps",    	required_argument, NULL, 'l'},
 		{"ecc",    	required_argument, NULL, 'e'},
+		{"lic",    	required_argument, NULL, 'L'},
 		{"di",    	required_argument, NULL, 'd'},
 		{"ctl",		required_argument, NULL, 'C'},
 		#ifdef RDS2
@@ -231,6 +232,10 @@ keep_parsing_opts:
 
 		case 'e': /* ecc */
 			rds_params.ecc = strtoul(optarg, NULL, 16);
+			break;
+
+		case 'L': /* lic */
+			rds_params.lic = strtoul(optarg, NULL, 16);
 			break;
 
 		case 'C': /* ctl */
@@ -328,24 +333,6 @@ done_parsing_opts:
 			control_pipe[0] = 0;
 		}
 	}
-
-	#ifdef NETCTL
-	/* ASCII control over network socket */
-	if (port) {
-		if (open_ctl_socket(port, proto) == 0) {
-			fprintf(stderr, "Reading control commands on port %d.\n", port);
-			r = pthread_create(&net_ctl_thread, &attr, net_ctl_worker, NULL);
-			if (r < 0) {
-				fprintf(stderr, "Could not create network control thread.\n");
-				goto exit;
-			} else {
-				fprintf(stderr, "Created network control thread.\n");
-			}
-		} else {
-			fprintf(stderr, "Failed to open port %d.\n", port);
-		}
-	}
-	#endif
 
 	for (;;) {
 		fm_rds_get_frames(mpx_buffer, NUM_MPX_FRAMES_IN);
