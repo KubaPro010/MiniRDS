@@ -27,6 +27,7 @@
 
 /* needed workaround implicit declaration */
 extern int nanosleep(const struct timespec *req, struct timespec *rem);
+size_t strnlen(const char *s, size_t maxlen);
 
 /* millisecond sleep */
 void msleep(unsigned long ms) {
