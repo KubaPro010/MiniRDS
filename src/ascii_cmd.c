@@ -23,6 +23,7 @@
 #include "fm_mpx.h"
 #include "lib.h"
 #include "ascii_cmd.h"
+#include <string.h>
 
 #define CMD_MATCHES(a) (ustrcmp(cmd, (unsigned char *)a) == 0)
 

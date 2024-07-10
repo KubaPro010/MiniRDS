@@ -24,7 +24,6 @@
 #endif
 #include "lib.h"
 #include <time.h>
-#include <string.h>
 
 static struct rds_params_t rds_data;
 
