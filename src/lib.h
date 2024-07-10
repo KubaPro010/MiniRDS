@@ -17,6 +17,7 @@
  */
 
 extern void msleep(unsigned long ms);
+extern size_t _strnlen(const char *s, size_t maxlen);
 
 extern int ustrcmp(const unsigned char *s1, const unsigned char *s2);
 
