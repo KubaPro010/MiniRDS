@@ -39,8 +39,9 @@ void msleep(unsigned long ms) {
 /* just like strlen*/
 size_t _strnlen(const char *s, size_t maxlen) {
 	size_t len = 0;
-	while (str[len] != 0 && len < maxlen)
+	while (s[len] != 0 && len < maxlen)
 		len++;
+	return len;
 }
 
 /* unsigned equivalent of strcmp */
