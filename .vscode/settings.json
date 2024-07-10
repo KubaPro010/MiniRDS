@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "ascii_cmd.h": "c"
+        "ascii_cmd.h": "c",
+        "time.h": "c"
     }
 }
