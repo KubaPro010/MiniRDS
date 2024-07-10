@@ -18,6 +18,7 @@
 
 #include "common.h"
 #include "rds.h"
+#include <time.h>
 
 /*
  * Stuff common for both RDS and RDS2
