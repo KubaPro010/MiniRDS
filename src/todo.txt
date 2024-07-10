@@ -4,7 +4,6 @@ Current TODO for RDS encoding:
 - Bidirectionality
 
 ASCII commands to implement:
-- AF
 - Group sequence
 - Short RT
 

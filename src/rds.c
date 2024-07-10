@@ -56,6 +56,8 @@ static struct {
 
 	uint8_t custom_group_in;
 	uint16_t custom_group[GROUP_LENGTH];
+
+	/* TODO: add UDG */
 } rds_state;
 
 #ifdef ODA
@@ -123,13 +125,13 @@ static uint16_t get_next_af() {
 static void get_rds_ps_group(uint16_t *blocks) {
 	static unsigned char ps_text[PS_LENGTH];
 	static unsigned char tps_text[PS_LENGTH];
-	static uint8_t ps_state;
+	static uint8_t ps_csegment;
 
-	if (ps_state == 0 && rds_state.ps_update) {
+	if (ps_csegment == 0 && rds_state.ps_update) {
 		memcpy(ps_text, rds_data.ps, PS_LENGTH);
 		rds_state.ps_update = 0; /* rewind */
 	}
-	if(ps_state == 0 && rds_state.tps_update) {
+	if(ps_csegment == 0 && rds_state.tps_update) {
 		memcpy(tps_text, rds_data.tps, PS_LENGTH);
 		rds_state.tps_update = 0; /* rewind */
 	}
@@ -141,23 +143,24 @@ static void get_rds_ps_group(uint16_t *blocks) {
 	blocks[1] |= rds_data.ms << 3;
 
 	/* DI */
-	blocks[1] |= ((rds_data.di >> (3 - ps_state)) & INT8_0) << 2;
+	blocks[1] |= ((rds_data.di >> (3 - ps_csegment)) & INT8_0) << 2; /* DI  is a 4 bit number, we also have 4 segments, so we send a bit of the di number depending on the segment, so 0b0101 would be like: 0 1 0 1*/
 
 	/* PS segment address */
-	blocks[1] |= ps_state;
+	blocks[1] |= ps_csegment;
 
 	/* AF */
 	blocks[2] = get_next_af();
 
 	/* PS */
 	if(rds_data.ta && rds_data.traffic_ps_on) {
-		blocks[3] = tps_text[ps_state * 2] << 8 | tps_text[ps_state * 2 + 1];
+		blocks[3] = tps_text[ps_csegment * 2] << 8 | tps_text[ps_csegment * 2 + 1];
 	} else {
-		blocks[3] =  ps_text[ps_state * 2] << 8 |  ps_text[ps_state * 2 + 1];
+		/* TODO: Add DPS */
+		blocks[3] =  ps_text[ps_csegment * 2] << 8 |  ps_text[ps_csegment * 2 + 1];
 	}
 
-	ps_state++;
-	if (ps_state == 4) ps_state = 0;
+	ps_csegment++;
+	if (ps_csegment == 4) ps_csegment = 0;
 }
 
 /* RT group (2A) */

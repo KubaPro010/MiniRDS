@@ -30,8 +30,7 @@ void process_ascii_cmd(unsigned char *str) {
 	unsigned char *cmd, *arg;
 	uint16_t cmd_len = 0;
 
-	while (str[cmd_len] != 0 && cmd_len < CTL_BUFFER_SIZE)
-		cmd_len++;
+	cmd_len = strnlen(str, CTL_BUFFER_SIZE);
 
 	if (cmd_len > 3 && str[2] == ' ') {
 		cmd = str;
