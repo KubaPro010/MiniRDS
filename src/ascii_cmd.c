@@ -23,7 +23,6 @@
 #include "fm_mpx.h"
 #include "lib.h"
 #include "ascii_cmd.h"
-#include <string.h>
 
 #define CMD_MATCHES(a) (ustrcmp(cmd, (unsigned char *)a) == 0)
 
@@ -31,7 +30,7 @@ void process_ascii_cmd(unsigned char *str) {
 	unsigned char *cmd, *arg;
 	uint16_t cmd_len = 0;
 
-	cmd_len = strnlen(str, CTL_BUFFER_SIZE);
+	cmd_len = _strnlen(str, CTL_BUFFER_SIZE);
 
 	if (cmd_len > 3 && str[2] == ' ') {
 		cmd = str;

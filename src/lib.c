@@ -36,6 +36,13 @@ void msleep(unsigned long ms) {
 	nanosleep(&ts, NULL);
 }
 
+/* just like strlen*/
+size_t _strnlen(const char *s, size_t maxlen) {
+	size_t len = 0;
+	while (str[len] != 0 && len < maxlen)
+		len++;
+}
+
 /* unsigned equivalent of strcmp */
 int ustrcmp(const unsigned char *s1, const unsigned char *s2) {
 	unsigned char c1, c2;
