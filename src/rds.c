@@ -166,7 +166,7 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
 	static uint8_t rt_state;
 
 	if (rds_state.rt_update) {
-		memcpy(rt_text, rds_data.rt, RT_LENGTH);
+		memcpy(rt_text, rds_data.rt1, RT_LENGTH);
 		rds_state.rt_ab ^= 1;
 		rds_state.rt_update = 0;
 		rt_state = 0; /* rewind when new RT arrives */
@@ -543,7 +543,7 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_pi(rds_params.pi);
 	set_rds_ps(rds_params.ps);
 	rds_state.rt_ab = 1;
-	set_rds_rt(rds_params.rt);
+	set_rds_rt1(rds_params.rt1);
 	set_rds_pty(rds_params.pty);
 	rds_state.ptyn_ab = 1;
 	set_rds_ptyn(rds_params.ptyn);
@@ -554,7 +554,7 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_pin_enabled(1);
 	set_rds_ct(1);
 	set_rds_ms(1);
-	set_rds_di(DI_STEREO);
+	set_rds_di(DI_STEREO | DI_DPTY);
 
 	/* Assign the RT+ AID to group 11A */
 	#ifdef ODA_RTP
@@ -601,20 +601,16 @@ void set_rds_pin(uint8_t day, uint8_t hour, uint8_t minute) {
 	rds_data.pin_minute = (minute & INT8_L6);
 }
 
-void set_rds_rt_ab(uint8_t ab) {
-	rds_state.rt_ab = ab & INT8_0;
-}
-
 void set_rds_rt1_enabled(uint8_t rt1en) {
 	rds_state.rt1_enabled = rt1en & INT8_0;
 }
-void set_rds_rt(unsigned char *rt) {
+void set_rds_rt1(unsigned char *rt1) {
 	uint8_t i = 0, len = 0;
 
 	rds_state.rt_update = 1;
-	memset(rds_data.rt, ' ', RT_LENGTH);
-	while (*rt != 0 && len < RT_LENGTH)
-		rds_data.rt[len++] = *rt++;
+	memset(rds_data.rt1, ' ', RT_LENGTH);
+	while (*rt1 != 0 && len < RT_LENGTH)
+		rds_data.rt1[len++] = *rt1++;
 
 	if (len < RT_LENGTH) {
 		rds_state.rt_segments = 0;
@@ -622,7 +618,7 @@ void set_rds_rt(unsigned char *rt) {
 		/* Terminate RT with '\r' (carriage return) if RT
 		 * is < 64 characters long
 		 */
-		rds_data.rt[len++] = '\r';
+		rds_data.rt1[len++] = '\r';
 
 		/* find out how many segments are needed */
 		while (i < len) {

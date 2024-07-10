@@ -34,7 +34,6 @@ void process_ascii_cmd(unsigned char *str) {
 		cmd_len++;
 
 	if (cmd_len > 3 && str[2] == ' ') {
-		/* TODO: Deprecate the old format*/
 		cmd = str;
 		cmd[2] = 0;
 		arg = str + 3;
@@ -50,41 +49,6 @@ void process_ascii_cmd(unsigned char *str) {
 				set_rds_cg(blocks);
 			}
 			return;
-		}
-		if (CMD_MATCHES("AF")) {
-			uint8_t arg_count;
-			rds_af_t new_af;
-			char af_cmd;
-			float af[MAX_AFS], *af_iter;
-
-			arg_count = sscanf((char *)arg,
-				"%c " /* AF command */
-				"%f %f %f %f %f " /* AF list */
-				"%f %f %f %f %f "
-				"%f %f %f %f %f "
-				"%f %f %f %f %f "
-				"%f %f %f %f %f",
-			&af_cmd,
-			&af[0],  &af[1],  &af[2],  &af[3],  &af[4],
-			&af[5],  &af[6],  &af[7],  &af[8],  &af[9],
-			&af[10], &af[11], &af[12], &af[13], &af[14],
-			&af[15], &af[16], &af[17], &af[18], &af[19],
-			&af[20], &af[21], &af[22], &af[23], &af[24]);
-			switch (af_cmd) {
-			case 's': /* set */
-				af_iter = af;
-				memset(&new_af, 0, sizeof(struct rds_af_t));
-				while ((arg_count-- - 1) != 0) {
-					add_rds_af(&new_af, *af_iter++);
-				}
-				set_rds_af(new_af);
-				break;
-			case 'c': /* clear */
-				clear_rds_af();
-				break;
-			default: /* other */
-				return;
-			}
 		}
 	}
 
@@ -137,7 +101,7 @@ void process_ascii_cmd(unsigned char *str) {
 		arg = str + 5;
 		if (CMD_MATCHES("TEXT")) {
 			arg[RT_LENGTH * 2] = 0;
-			set_rds_rt(xlat(arg));
+			set_rds_rt1(xlat(arg));
 			return;
 		}
 		if (CMD_MATCHES("PTYN")) {
@@ -201,7 +165,7 @@ void process_ascii_cmd(unsigned char *str) {
 		}
 		if (CMD_MATCHES("RT1")) {
 			arg[RT_LENGTH * 2] = 0;
-			set_rds_rt(xlat(arg));
+			set_rds_rt1(xlat(arg));
 			return;
 		}
 		if (CMD_MATCHES("PTY")) {
@@ -357,6 +321,11 @@ void process_ascii_cmd(unsigned char *str) {
 		if (CMD_MATCHES("PINEN")) {
 			arg[1] = 0;
 			set_rds_pin_enabled(strtoul((char *)arg, NULL, 10));
+			return;
+		}
+
+		if (CMD_MATCHES("RT1EN")) {
+			set_rds_rt1_enabled(arg[0]);
 			return;
 		}
 	}

@@ -83,7 +83,7 @@ static void show_help(char *name) {
 		"                        [default: 3073]\n"
 		"    -s,--ps           Program Service name\n"
 		"                        [default: \"radio95\"]\n"
-		"    -r,--rt           Radio Text\n"
+		"    -r,--rt1           Radio Text 1\n"
 		"                        [default: (nothing)]\n"
 		"    -p,--pty          Program Type\n"
 		"                        [default: 0]\n"
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
 	char control_pipe[51];
 	struct rds_params_t rds_params = {
 		.ps = "radio95",
-		.rt = "",
+		.rt1 = "",
 		.pi = 0x3073,
 		.ecc = 0xE2
 	};
@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
 		{"rds",		required_argument, NULL, 'R'},
 		{"pi",		required_argument, NULL, 'i'},
 		{"ps",		required_argument, NULL, 's'},
-		{"rt",		required_argument, NULL, 'r'},
+		{"rt1",		required_argument, NULL, 'r'},
 		{"pty",		required_argument, NULL, 'p'},
 		{"tp",		required_argument, NULL, 'T'},
 		{"af",		required_argument, NULL, 'A'},
@@ -206,8 +206,8 @@ keep_parsing_opts:
 			memcpy(rds_params.ps, xlat((unsigned char *)optarg), PS_LENGTH);
 			break;
 
-		case 'r': /* rt */
-			memcpy(rds_params.rt, xlat((unsigned char *)optarg), RT_LENGTH);
+		case 'r': /* rt1 */
+			memcpy(rds_params.rt1, xlat((unsigned char *)optarg), RT_LENGTH);
 			break;
 
 		case 'p': /* pty */
