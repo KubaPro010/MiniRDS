@@ -127,9 +127,10 @@ int main(int argc, char **argv) {
 		.ps = "radio95",
 		.rt1 = "",
 		.pi = 0x3073,
-		.ecc = 0xE2
+		.ecc = 0xE2,
+		.lps = "radio95 - Radio Nowotomyskie"
 	};
-	float volume = 80.0f;
+	float volume = 100.0f;
 
 	/* buffers */
 	float *mpx_buffer;
