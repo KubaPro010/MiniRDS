@@ -59,7 +59,7 @@ void set_rdsgen(uint8_t gen) {
 /* subcarrier volumes */
 static float volumes[MPX_SUBCARRIER_END] = {
 	0.0f, /* pilot tone: 0% */
-	0.045f, /* RDS: 4.5% modulation */
+	0.05f, /* RDS: 5% modulation */
 #ifdef RDS2
 	/* RDS2 */
 	0.05f, //66.5  khz 5%
