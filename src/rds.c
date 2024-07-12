@@ -506,18 +506,18 @@ static void get_rds_group(uint16_t *blocks) {
 
 	/* Standard group sequence
 	This group sequence is way better than the offcial one, official goes like: 0A 2A which is shitty here it is 0A 0A 0A 0A 2A 2A 2A 2A (2A) so we're in sequence and for example immiedietly get PS and quite fast get RT */
-	if(state < 4) {
+	if(state < 6) {
 		/* 0A */
 		get_rds_ps_group(blocks);
 		state++;
-	} else if(state < 9) {
+	} else if(state >= 6) {
 		/* 2A */
 		if(!get_rds_rt_group(blocks)) { /* try to generate 2A if can't generate 2A than that means our text is empty so we generate PS instead of wasting groups on nothing*/
 			get_rds_ps_group(blocks);
 		}
 		state++;
 	}
-	if (state >= 9) state = 0;
+	if (state >= 12) state = 0;
 
 group_coded:
 	/* for version B groups. good for custom groups */
