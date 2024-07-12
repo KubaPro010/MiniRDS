@@ -551,6 +551,8 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_pty(rds_params.pty);
 	rds_state.ptyn_ab = 1;
 	set_rds_ptyn(rds_params.ptyn);
+	set_rds_lps(rds_params.lps);
+	set_rds_lpson(1);
 	set_rds_tp(rds_params.tp);
 	set_rds_ecc(rds_params.ecc);
 	set_rds_lic(rds_params.lic);
@@ -664,10 +666,8 @@ void set_rds_lps(unsigned char *lps) {
 
 	if (!lps[0]) {
 		memset(rds_data.lps, 0, LPS_LENGTH);
-		set_rds_lpson(0);
 		return;
 	}
-	set_rds_lpson(1);
 	rds_state.lps_update = 1;
 	memset(rds_data.lps, '\r', LPS_LENGTH);
 	while (*lps != 0 && len < LPS_LENGTH)
