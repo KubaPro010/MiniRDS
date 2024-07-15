@@ -32,7 +32,7 @@
 static uint8_t stop_rds;
 
 static void stop() {
-	printf("Received an stopping signal\n")
+	printf("Received an stopping signal\n");
 	stop_rds = 1;
 }
 
