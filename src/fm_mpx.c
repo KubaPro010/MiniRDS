@@ -171,8 +171,8 @@ void fm_rds_get_frames(float *outbuf, size_t num_frames) {
 
 		/* adjust volume and put into both channels */
 		if(rdsgen != 0)
-			outbuf[j+0] = outbuf[j+1] = out * mpx_vol;
-		j += 2;
+			outbuf[j] = out * mpx_vol;
+		j++;
 
 	}
 }
