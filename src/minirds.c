@@ -51,11 +51,9 @@ static inline void float2char2channel(
 
 		outbuf[k+0] = lower;
 		outbuf[k+1] = upper;
-		outbuf[k+2] = lower;
-		outbuf[k+3] = upper;
 
 		j += 2;
-		k += 4;
+		k += 2;
 	}
 }
 
@@ -76,8 +74,6 @@ static void show_help(char *name) {
 		"Version %f\n"
 		"\n"
 		"Usage: %s [options]\n"
-		"\n"
-		"    -m,--volume       Output volume\n"
 		"\n"
 		"    -i,--pi           Program Identification code\n"
 		"                        [default: 3073]\n"
@@ -109,15 +105,6 @@ static void show_help(char *name) {
 
 static void show_version() {
 	printf("MiniRDS version (radio95 Edit) %f\n", VERSION);
-}
-
-/* check MPX volume level */
-static uint8_t check_mpx_vol(float volume) {
-	if (volume < 0.0f || volume > 100.0f) {
-		fprintf(stderr, "Output volume must be between 1-100.\n");
-		return 1;
-	}
-	return 0;
 }
 
 int main(int argc, char **argv) {
@@ -154,7 +141,7 @@ int main(int argc, char **argv) {
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
 
-	const char	*short_opt = "m:R:i:s:r:p:T:A:P:l:e:L:d:C:"
+	const char	*short_opt = "R:i:s:r:p:T:A:P:l:e:L:d:C:"
 	#ifdef RDS2
 	"I:"
 	#endif
@@ -162,8 +149,6 @@ int main(int argc, char **argv) {
 
 	struct option	long_opt[] =
 	{
-		{"volume",	required_argument, NULL, 'm'},
-
 		{"rds",		required_argument, NULL, 'R'},
 		{"pi",		required_argument, NULL, 'i'},
 		{"ps",		required_argument, NULL, 's'},
@@ -194,11 +179,6 @@ keep_parsing_opts:
 	if (opt == -1) goto done_parsing_opts;
 
 	switch (opt) {
-		case 'm': /* volume */
-			volume = strtof(optarg, NULL);
-			if (check_mpx_vol(volume) > 0) return 1;
-			break;
-
 		case 'i': /* pi */
 			rds_params.pi = strtoul(optarg, NULL, 16);
 			break;
@@ -287,7 +267,7 @@ done_parsing_opts:
 
 	/* AO format */
 	memset(&format, 0, sizeof(struct ao_sample_format));
-	format.channels = 2;
+	format.channels = 1;
 	format.bits = 16;
 	format.rate = OUTPUT_SAMPLE_RATE;
 	format.byte_format = AO_FMT_LITTLE;
@@ -310,7 +290,7 @@ done_parsing_opts:
 	src_data.data_in = mpx_buffer;
 	src_data.data_out = out_buffer;
 
-	r = resampler_init(&src_state, 2);
+	r = resampler_init(&src_state, 1);
 	if (r < 0) {
 		fprintf(stderr, "Could not create output resampler.\n");
 		goto exit;
@@ -343,7 +323,7 @@ done_parsing_opts:
 		float2char2channel(out_buffer, dev_out, frames);
 
 		/* num_bytes = audio frames * channels * bytes per sample */
-		if (!ao_play(device, dev_out, frames * 2 * sizeof(int16_t))) {
+		if (!ao_play(device, dev_out, frames * 1 * sizeof(int16_t))) {
 			fprintf(stderr, "Error: could not play audio.\n");
 			break;
 		}
