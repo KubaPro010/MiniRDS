@@ -28,6 +28,7 @@ Note that some missing groups were added from [librds](https://flerken.zapto.org
 - Added LIC and PIN
 - Most commands are compatible with the ASCII format that pira.cz uses
 - Custom groups (use `G=????????????` or `CG ???? ???? ???? ????`)
+- Mono! mono? Mono! Not stereo! why? because the 2 channels were exactly the same in the first place so there was no point in having a 2nd one
 
 ## Build
 For Debian-like distros: `sudo apt-get install libao-dev libsamplerate0-dev` to install deps.
