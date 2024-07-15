@@ -69,7 +69,7 @@ void poll_control_pipe() {
 		read(fd, pipe_buf, CTL_BUFFER_SIZE - 1);
 	}
 
-	/* handle commands per line */
+	/* handle commands per line this is really good because if were sending text commands very quick after eachother then we can get a rt of for example 'Now its 12:00RT Now its 12:01' */
 	token = strtok((char *)pipe_buf, "\n");
 	while (token != NULL) {
 		memset(cmd_buf, 0, CMD_BUFFER_SIZE);

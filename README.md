@@ -33,7 +33,7 @@ Note that some missing groups were added from [librds](https://flerken.zapto.org
 ## Build
 For Debian-like distros: `sudo apt-get install libao-dev libsamplerate0-dev` to install deps.
 
-Note that MiniRDS requires CMake to compile
+Note that MiniRDS requires CMake to compile (install with `sudo apt install cmake`)
 
 Once those are installed, run
 ```sh

@@ -25,7 +25,7 @@
  *
  */
 
-/* needed workaround implicit declaration */
+/* needed workaround implicit declaration (edit: do we need this? ) */
 extern int nanosleep(const struct timespec *req, struct timespec *rem);
 
 /* millisecond sleep */

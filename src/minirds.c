@@ -32,6 +32,7 @@
 static uint8_t stop_rds;
 
 static void stop() {
+	printf("Received an stopping signal\n")
 	stop_rds = 1;
 }
 
@@ -323,13 +324,13 @@ done_parsing_opts:
 		float2char2channel(out_buffer, dev_out, frames);
 
 		/* num_bytes = audio frames * channels * bytes per sample */
-		if (!ao_play(device, dev_out, frames * 1 * sizeof(int16_t))) {
+		if (!ao_play(device, dev_out, frames * sizeof(int16_t))) {
 			fprintf(stderr, "Error: could not play audio.\n");
 			break;
 		}
 
 		if (stop_rds) {
-			fprintf(stderr, "Stopping...\n");
+			fprintf(stderr, "Stopping the loop...\n");
 			break;
 		}
 	}

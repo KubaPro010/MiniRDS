@@ -38,7 +38,7 @@ void process_ascii_cmd(unsigned char *str) {
 		arg = str + 3;
 
 		if (CMD_MATCHES("CG")) {
-			/* this stays*/
+			/* this stays */
 			uint16_t blocks[4];
 			int count = sscanf((const char*)arg, "%hX %hX %hX %hX",
 							&blocks[0], &blocks[1],
