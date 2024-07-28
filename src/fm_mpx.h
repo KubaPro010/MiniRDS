@@ -17,7 +17,7 @@
  */
 
 /* MPX */
-#define NUM_MPX_FRAMES_IN	512
+#define NUM_MPX_FRAMES_IN	256
 #define NUM_MPX_FRAMES_OUT	(NUM_MPX_FRAMES_IN * 2)
 
 /*
