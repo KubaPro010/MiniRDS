@@ -547,6 +547,7 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	set_rds_pi(rds_params.pi);
 	set_rds_ps(rds_params.ps);
 	rds_state.rt_ab = 1;
+	set_rds_rt1_enabled(1);
 	set_rds_rt1(rds_params.rt1);
 	set_rds_pty(rds_params.pty);
 	rds_state.ptyn_ab = 1;
