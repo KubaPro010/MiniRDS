@@ -161,7 +161,7 @@ static void get_rds_ps_group(uint16_t *blocks) {
 	}
 
 	ps_csegment++;
-	if (ps_csegment == 4) ps_csegment = 0;
+	if (ps_csegment >= 4) ps_csegment = 0;
 }
 
 /* RT group (2A) */
@@ -176,7 +176,7 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
 		rt_state = 0; /* rewind when new RT arrives */
 	}
 
-	if(rt_text[0] == '\r' && !rds_state.rt1_enabled) {
+	if(rt_text[0] == '\r' || !rds_state.rt1_enabled) {
 		/* RT strings lesser than 64 in size should have been ended with a \r if a return is on [0] then that means that our string is empty and thus we can not generate this group*/
 		return 0;
 	}
@@ -190,7 +190,7 @@ static uint8_t get_rds_rt_group(uint16_t *blocks) {
 	blocks[3] |= rt_text[rt_state * 4 + 3];
 
 	rt_state++;
-	if (rt_state == rds_state.rt_segments) rt_state = 0;
+	if (rt_state >= rds_state.rt_segments) rt_state = 0;
 	return 1;
 }
 
@@ -215,7 +215,7 @@ static void get_rds_oda_group(uint16_t *blocks) {
 	blocks[3] = this_oda.aid;
 
 	oda_state.current++;
-	if (oda_state.current == oda_state.count) oda_state.current = 0;
+	if (oda_state.current >= oda_state.count) oda_state.current = 0;
 }
 #endif
 

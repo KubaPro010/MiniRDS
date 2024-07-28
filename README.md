@@ -23,11 +23,11 @@ Note that some missing groups were added from [librds](https://flerken.zapto.org
 ## What are the changes from normal MiniRDS?
 - CMake
 - better arguments
-- Option to disable ODA (to not get that ODA AID thing)
+- Option to disable ODA
 - Better Group Sequence (original had 0A 2A but here it is 0A 0A 0A 0A 2A 2A 2A 2A (2A) so PS appear instantly and RT is fast)
 - Added LIC and PIN
 - Most commands are compatible with the ASCII format that pira.cz uses
-- Custom groups (use `G=????????????` or `CG ???? ???? ???? ????`)
+- Custom groups (use `G=BBBBCCCCDDDD` or `CG AAAA BBBB CCCC DDDD`)
 - Mono! mono? Mono! Not stereo! why? because the 2 channels were exactly the same in the first place so there was no point in having a 2nd one
 
 ## Build
@@ -121,4 +121,5 @@ Technical Manual](https://pira.cz/rds/manual.pdf)
 
 ## Credits
 Note that this is a fork of [Anthony96922](https://github.com/Anthony96922)'s [MiniRDS](https://github.com/Anthony96922/MiniRDS)
+
 The RDS waveform generator was adapted from [PiFmRds](https://github.com/ChristopheJacquet/PiFmRds)

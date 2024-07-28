@@ -1,3 +1,5 @@
+# This is from kuba's version of MiniRDS
+
 cmake_minimum_required(VERSION 3.10)
 
 # Project name and version

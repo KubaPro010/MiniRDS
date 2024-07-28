@@ -24,4 +24,4 @@ PINEN
 RTP
 RTPRUN
 
-(Magic RDS 3 'Program' page is fully supported)
+(Magic RDS 3 'Program' page is fully supported.)

@@ -17,7 +17,7 @@ X - UDG1 (yet to implement, max 8 groups per udg)
 Y - UDG2 (yet to implement)
 R - RT+ 3A 11A (do i switch between them like ecc lic?)
 F - 15A (LPS)
-Max 24 items in a sequence
+Max 24 items in a sequence.
 
 Note that most of this is takes out of pira.cz's P164 RDS Encoder's manual: https://pira.cz/rds/p164man.pdf
 

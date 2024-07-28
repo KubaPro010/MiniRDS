@@ -40,3 +40,4 @@ typedef struct rds_t {
 
 extern void init_rds_objects();
 extern void exit_rds_objects();
+

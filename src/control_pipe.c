@@ -79,7 +79,6 @@ void poll_control_pipe() {
 		process_ascii_cmd(cmd_buf);
 	}
 }
-
 void close_control_pipe() {
 	if (fd > 0) close(fd);
 }

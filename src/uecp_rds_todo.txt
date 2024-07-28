@@ -1,5 +1,5 @@
 This aims to have the around the same options as UECP should have, this is what is not yet implemented:
-- PIN (low priority, how do i decode that???)
+- PIN (low priority, how do i decode that?)
 - EON AF (very low priority)
 - Linkage information (very low priority)
 - (ODA skipped)
@@ -10,7 +10,6 @@ This aims to have the around the same options as UECP should have, this is what 
 - (No CT time adjustments)
 - RDS on/off (low priority)
 - RDS phase (might be medium, 9.5 degree steps)
-- RDS level (kinda done?)
 - (ARI skipped)
 
 Others:

@@ -186,6 +186,5 @@ done:
 	rds->sample_buffer[rds->out_sample_index++] = 0;
 	if (rds->out_sample_index == SAMPLE_BUFFER_SIZE)
 		rds->out_sample_index = 0;
-
 	return sample;
 }

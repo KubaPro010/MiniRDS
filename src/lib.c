@@ -36,7 +36,7 @@ void msleep(unsigned long ms) {
 	nanosleep(&ts, NULL);
 }
 
-/* just like strlen*/
+/* just like strlen */
 size_t _strnlen(const char *s, size_t maxlen) {
 	size_t len = 0;
 	while (s[len] != 0 && len < maxlen)

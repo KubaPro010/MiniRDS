@@ -43,7 +43,6 @@ void process_ascii_cmd(unsigned char *str) {
 			int count = sscanf((const char*)arg, "%hX %hX %hX %hX",
 							&blocks[0], &blocks[1],
 							&blocks[2], &blocks[3]);
-
 			if (count == 4) {
 				set_rds_cg(blocks);
 			}

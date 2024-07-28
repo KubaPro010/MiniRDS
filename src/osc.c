@@ -50,7 +50,7 @@ static void create_wave(uint32_t rate, float freq,
 		cos_sample = cos(w * phase);
 		if (sin_sample > -0.1e-4 && sin_sample < 0.1e-4) {
 			zero_crossings++;
-			sin_sample = 0.0f;
+			sin_sample = 0.00f;
 		}
 		*sin_wave++ = (float)sin_sample;
 		*cos_wave++ = (float)cos_sample;

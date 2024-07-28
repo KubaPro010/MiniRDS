@@ -70,8 +70,9 @@ typedef struct rds_params_t {
 
 	/* Program Service */
 	unsigned char ps[PS_LENGTH];
+	/* Traffic PS */
 	uint8_t traffic_ps_on;
-	unsigned char tps[PS_LENGTH]; /* Traffic PS */
+	unsigned char tps[PS_LENGTH];
 
 	/* Radio Text */
 	unsigned char rt1[RT_LENGTH];

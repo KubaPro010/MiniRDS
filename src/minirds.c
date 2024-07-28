@@ -323,7 +323,7 @@ done_parsing_opts:
 
 		float2char2channel(out_buffer, dev_out, frames);
 
-		/* num_bytes = audio frames * channels * bytes per sample */
+		/* num_bytes = audio frames( * channels) * bytes per sample */
 		if (!ao_play(device, dev_out, frames * sizeof(int16_t))) {
 			fprintf(stderr, "Error: could not play audio.\n");
 			break;
