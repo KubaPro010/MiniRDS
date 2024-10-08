@@ -20,7 +20,7 @@
 #include <signal.h>
 #include <getopt.h>
 #include <pthread.h>
-#include <ao/ao.h>
+#include <pulse/simple.h>
 
 #include "rds.h"
 #include "fm_mpx.h"
@@ -132,9 +132,9 @@ int main(int argc, char **argv) {
 	SRC_STATE *src_state;
 	SRC_DATA src_data;
 
-	/* AO */
-	ao_device *device;
-	ao_sample_format format;
+	/* PASIMPLE */
+	pa_simple *device;
+	pa_sample_spec format;
 
 	/* pthread */
 	pthread_attr_t attr;
@@ -266,19 +266,23 @@ done_parsing_opts:
 	/* Initialize the RDS modulator */
 	init_rds_encoder(rds_params);
 
-	/* AO format */
-	memset(&format, 0, sizeof(struct ao_sample_format));
+	/* PASIMPLE format */
+	format.format = PA_SAMPLE_S16LE;
 	format.channels = 1;
-	format.bits = 16;
 	format.rate = OUTPUT_SAMPLE_RATE;
-	format.byte_format = AO_FMT_LITTLE;
 
-	ao_initialize();
-
-	device = ao_open_live(ao_default_driver_id(), &format, NULL);
+	device = pa_simple_new(NULL,               // Use the default server.
+                  "MiniRDS",           // Our application's name.
+                  PA_STREAM_PLAYBACK,
+                  NULL,               // Use the default device.
+                  "RDS Generator",            // Description of our stream.
+                  &format,                // Our sample format.
+                  NULL,               // Use default channel map
+                  NULL,               // Use default buffering attributes.
+                  NULL,               // Ignore error code.
+                  );
 	if (device == NULL) {
 		fprintf(stderr, "Error: cannot open sound device.\n");
-		ao_shutdown();
 		goto exit;
 	}
 
@@ -324,7 +328,7 @@ done_parsing_opts:
 		float2char2channel(out_buffer, dev_out, frames);
 
 		/* num_bytes = audio frames( * channels) * bytes per sample */
-		if (!ao_play(device, dev_out, frames * sizeof(int16_t))) {
+		if (pa_simple_write(device, dev_out, frames * sizeof(int16_t), NULL) != 0) {
 			fprintf(stderr, "Error: could not play audio.\n");
 			break;
 		}
@@ -346,7 +350,7 @@ exit:
 	}
 
 	pthread_attr_destroy(&attr);
-
+	pa_simple_free(device);
 	fm_mpx_exit();
 	exit_rds_encoder();
 
