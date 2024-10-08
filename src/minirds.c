@@ -271,16 +271,17 @@ done_parsing_opts:
 	format.channels = 1;
 	format.rate = OUTPUT_SAMPLE_RATE;
 
-	device = pa_simple_new(NULL,               // Use the default server.
-                  "MiniRDS",           // Our application's name.
-                  PA_STREAM_PLAYBACK,
-                  NULL,               // Use the default device.
-                  "RDS Generator",            // Description of our stream.
-                  &format,                // Our sample format.
-                  NULL,               // Use default channel map
-                  NULL,               // Use default buffering attributes.
-                  NULL,               // Ignore error code.
-                  );
+	device = pa_simple_new(
+		NULL,                       // Default PulseAudio server
+		"MiniRDS",                 // Application name
+		PA_STREAM_PLAYBACK,        // Direction (playback)
+		NULL,                       // Default device
+		"RDS Generator",           // Stream description
+		&format,                   // Sample format
+		NULL,                       // Default channel map
+		NULL,                       // Default buffering attributes
+		NULL                     // Error variable
+	);
 	if (device == NULL) {
 		fprintf(stderr, "Error: cannot open sound device.\n");
 		goto exit;
