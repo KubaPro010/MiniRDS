@@ -73,7 +73,7 @@ else()
 endif()
 
 # Link additional libraries
-target_link_libraries(minirds PRIVATE m pthread pulse pulse-simple)
+target_link_libraries(minirds PRIVATE m pthread libpulse)
 
 # Install target
 install(TARGETS minirds DESTINATION /usr/local/bin)
